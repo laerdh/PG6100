@@ -17,7 +17,7 @@ public class SubCategory {
     public static final String GET_SUBCATEGORIES = "GET_SUBCATEGORIES";
 
     @Id
-    private String subCategoryName;
+    private String categoryName;
 
     @ManyToOne
     private Category parentCategory;
@@ -29,9 +29,9 @@ public class SubCategory {
     public SubCategory() {}
 
 
-    public String getSubCategoryName() { return subCategoryName; }
+    public String getCategoryName() { return categoryName; }
 
-    public void setSubCategoryName(String subCategoryName) { this.subCategoryName = subCategoryName; }
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 
     public Category getParentCategory() { return parentCategory; }
 

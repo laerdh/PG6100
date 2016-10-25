@@ -9,9 +9,9 @@ import java.util.List;
     @NamedQuery(name = SubSubCategory.GET_ALL_SUBSUBCATEGORIES,
         query = "select s from SubSubCategory s"),
     @NamedQuery(name = SubSubCategory.GET_SUBSUBCATEGORIES,
-        query = "select s from SubSubCategory s where s.parentSubCategory.subCategoryName = ?1"),
+        query = "select s from SubSubCategory s where s.parentSubCategory.categoryName = ?1"),
     @NamedQuery(name = SubSubCategory.GET_SUBSUBCATEGORY,
-        query = "select s from SubSubCategory s where s.subSubCategoryName = ?1")
+        query = "select s from SubSubCategory s where s.categoryName = ?1")
 })
 public class SubSubCategory {
 
@@ -20,7 +20,7 @@ public class SubSubCategory {
     public static final String GET_SUBSUBCATEGORY = "GET_SUBSUBCATEGORY";
 
     @Id
-    private String subSubCategoryName;
+    private String categoryName;
 
     @ManyToOne
     private SubCategory parentSubCategory;
@@ -32,9 +32,9 @@ public class SubSubCategory {
     public SubSubCategory() {}
 
 
-    public String getSubSubCategoryName() { return subSubCategoryName; }
+    public String getCategoryName() { return categoryName; }
 
-    public void setSubSubCategoryName(String subSubCategoryName) { this.subSubCategoryName = subSubCategoryName; }
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 
     public SubCategory getParentSubCategory() { return parentSubCategory; }
 

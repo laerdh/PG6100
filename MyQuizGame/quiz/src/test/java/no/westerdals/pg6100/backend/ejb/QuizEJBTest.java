@@ -69,6 +69,19 @@ public class QuizEJBTest {
     }
 
     @Test
+    public void testGetAllSubCategories() throws Exception {
+        int expected = quizEJB.getAllSubCategories().size();
+
+        createCategories("Sports", "Football", "Premier League");
+        createCategories("Sports", "Basket", "NBA");
+        createCategories("Sports", "Ski", "Cross-country Skiing");
+
+        int actual = quizEJB.getAllSubCategories().size();
+
+        assertEquals(expected + 3, actual);
+    }
+
+    @Test
     public void testAddSubSubCategory() throws Exception {
         String category = "Sports";
         String subCategory = "Football";
@@ -85,6 +98,31 @@ public class QuizEJBTest {
     }
 
     @Test
+    public void testGetAllSubSubCategories() throws Exception {
+        int expected = quizEJB.getAllSubSubCategories().size();
+
+        createCategories("Sports", "Football", "Premier League");
+        createCategories("Sports", "Football", "Championship");
+        createCategories("Sports", "Football", "Serie A");
+
+        int actual = quizEJB.getAllSubSubCategories().size();
+
+        assertEquals(expected + 3, actual);
+    }
+
+    @Test
+    public void testGetSubSubCategory() throws Exception {
+        int expected = quizEJB.getSubSubCategories("Football").size();
+
+        createCategories("Sports", "Football", "Premier League");
+        createCategories("Sports", "Football", "Champions League");
+
+        int actual = quizEJB.getSubSubCategories("Football").size();
+
+        assertEquals(expected + 2, actual);
+    }
+
+    @Test
     public void testAddQuizQuestion() throws Exception {
         createCategories("Sports", "Football", "Premier League");
 
@@ -92,6 +130,20 @@ public class QuizEJBTest {
         String correctAnswer = "Alan Shearer";
 
         assertTrue(quizEJB.createQuestion("Premier League", "Who is PL all-time topscorer?", answers, correctAnswer));
+    }
+
+    @Test
+    public void testGetQuizQuestion() throws Exception {
+        createCategories("Sports", "Football", "Premier League");
+
+        List<String> answers = Arrays.asList("David Beckham", "Jimmy Floyd Hasselbaink", "Eric Cantona", "Alan Shearer");
+        String correctAnswer = "Alan Shearer";
+
+        assertTrue(quizEJB.createQuestion("Premier League", "Who is PL all-time topscorer?", answers, correctAnswer));
+
+        Question q = quizEJB.getQuestion("Premier League");
+
+        assertEquals(correctAnswer, q.getCorrectAnswer());
     }
 
     public void createCategories(String category, String subCategory, String subSubCategory) throws Exception {

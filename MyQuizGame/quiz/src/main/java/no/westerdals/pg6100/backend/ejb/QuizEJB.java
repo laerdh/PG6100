@@ -51,7 +51,7 @@ public class QuizEJB {
         }
 
         SubCategory c = new SubCategory();
-        c.setSubCategoryName(formatInput(subCategory));
+        c.setCategoryName(formatInput(subCategory));
         c.setParentCategory(categoryExist);
 
         em.persist(c);
@@ -72,7 +72,7 @@ public class QuizEJB {
         }
 
         SubSubCategory c = new SubSubCategory();
-        c.setSubSubCategoryName(formatInput(subSubCategory));
+        c.setCategoryName(formatInput(subSubCategory));
         c.setParentSubCategory(subCategoryExist);
 
 
@@ -136,7 +136,7 @@ public class QuizEJB {
     }
 
     public Question getQuestion(String subSubCategory) {
-        Query query = em.createQuery("select q from Question q where q.parentCategory = ?1 order by random()");
+        Query query = em.createQuery("select q from Question q where q.parentSubSubCategory.categoryName = ?1 order by random()");
         query.setParameter(1, formatInput(subSubCategory));
         query.setMaxResults(1);
 
