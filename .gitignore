@@ -1,0 +1,5 @@
+*.iml
+*.class
+MyQuizGame/quiz/target/
+MyQuizGame/restAPI/target/
+MyQuizGame/report/target
