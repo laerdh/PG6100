@@ -1,10 +1,8 @@
 package no.westerdals.pg6100.backend.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,15 +17,19 @@ public class Question {
     @NotNull
     private String correctAnswer;
 
-    @NotNull
+    @ElementCollection
     private List<String> answers;
 
     @ManyToOne
-    private SubSubCategory parentCategory;
+    private SubSubCategory parentSubSubCategory;
 
 
     public Question() {}
 
+
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
 
     public String getQuestion() { return question; }
 
@@ -35,13 +37,18 @@ public class Question {
 
     public String getCorrectAnswer() { return correctAnswer; }
 
-    public void setCorrectAnswer(String answer) { this.correctAnswer = correctAnswer; }
+    public void setCorrectAnswer(String correctAnswer) { this.correctAnswer = correctAnswer; }
 
-    public List<String> getAnswers() { return answers; }
+    public List<String> getAnswers() {
+        if (answers == null) {
+            return new ArrayList<>();
+        }
+        return answers;
+    }
 
     public void setAnswers(List<String> answers) { this.answers = answers; }
 
-    public SubSubCategory getParentCategory() { return parentCategory; }
+    public SubSubCategory getParentSubSubCategory() { return parentSubSubCategory; }
 
-    public void setParentCategory(SubSubCategory parentCategory) { this.parentCategory = parentCategory; }
+    public void setParentSubSubCategory(SubSubCategory parentSubSubCategory) { this.parentSubSubCategory = parentSubSubCategory; }
 }

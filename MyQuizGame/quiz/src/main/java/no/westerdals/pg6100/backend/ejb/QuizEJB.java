@@ -33,7 +33,7 @@ public class QuizEJB {
         }
 
         Category c = new Category();
-        c.setCategory(formatInput(category));
+        c.setCategoryName(formatInput(category));
         em.persist(c);
         return true;
     }
@@ -51,7 +51,7 @@ public class QuizEJB {
         }
 
         SubCategory c = new SubCategory();
-        c.setSubCategory(formatInput(subCategory));
+        c.setSubCategoryName(formatInput(subCategory));
         c.setParentCategory(categoryExist);
 
         em.persist(c);
@@ -72,8 +72,8 @@ public class QuizEJB {
         }
 
         SubSubCategory c = new SubSubCategory();
-        c.setSubSubCategory(formatInput(subSubCategory));
-        c.setParentCategory(subCategoryExist);
+        c.setSubSubCategoryName(formatInput(subSubCategory));
+        c.setParentSubCategory(subCategoryExist);
 
 
         em.persist(c);
@@ -81,7 +81,7 @@ public class QuizEJB {
         return true;
     }
 
-    public boolean addQuestion(String subSubCategory, String question, List<String> answers, String correctAnswer) {
+    public boolean createQuestion(String subSubCategory, String question, List<String> answers, String correctAnswer) {
         if (!validInput(subSubCategory, question, correctAnswer) || answers == null) {
             return false;
         }
@@ -93,7 +93,7 @@ public class QuizEJB {
         }
 
         Question q = new Question();
-        q.setParentCategory(subSubCategoryExist);
+        q.setParentSubSubCategory(subSubCategoryExist);
         q.setQuestion(question);
         q.setAnswers(answers);
         q.setCorrectAnswer(correctAnswer);
@@ -103,9 +103,41 @@ public class QuizEJB {
         return true;
     }
 
-    public Question getQuestion(String category) {
-        Query query = em.createQuery("select q from Question q where q.parentCategory = ?1 order by random()");
+    public List<Category> getCategories() {
+        Query query = em.createNamedQuery(Category.GET_CATEGORIES);
+
+        return query.getResultList();
+    }
+
+    public List<SubCategory> getSubCategories(String category) {
+        Query query = em.createNamedQuery(SubCategory.GET_SUBCATEGORIES);
         query.setParameter(1, formatInput(category));
+
+        return query.getResultList();
+    }
+
+    public List<SubCategory> getAllSubCategories() {
+        Query query = em.createNamedQuery(SubCategory.GET_ALL_SUBCATEGORIES);
+
+        return query.getResultList();
+    }
+
+    public List<SubSubCategory> getSubSubCategories(String subCategory) {
+        Query query = em.createNamedQuery(SubSubCategory.GET_SUBSUBCATEGORIES);
+        query.setParameter(1, formatInput(subCategory));
+
+        return query.getResultList();
+    }
+
+    public List<SubSubCategory> getAllSubSubCategories() {
+        Query query = em.createNamedQuery(SubSubCategory.GET_ALL_SUBSUBCATEGORIES);
+
+        return query.getResultList();
+    }
+
+    public Question getQuestion(String subSubCategory) {
+        Query query = em.createQuery("select q from Question q where q.parentCategory = ?1 order by random()");
+        query.setParameter(1, formatInput(subSubCategory));
         query.setMaxResults(1);
 
         return (Question) query.getSingleResult();
