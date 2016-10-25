@@ -55,6 +55,18 @@ public class QuizEJBTest {
     }
 
     @Test
+    public void testDeleteCategory() throws Exception {
+        String category = "Sports";
+        assertTrue(quizEJB.createCategory(category));
+
+        int expected = quizEJB.getCategories().size();
+        assertEquals(1, quizEJB.deleteCategory(category));
+        int actual = quizEJB.getCategories().size();
+
+        assertEquals(expected - 1, actual);
+    }
+
+    @Test
     public void testAddSubCategory() throws Exception {
         String category = "Sports";
         String subCategory = "Football";
@@ -66,6 +78,21 @@ public class QuizEJBTest {
         int actual = quizEJB.getSubCategories(category).size();
 
         assertEquals(expected + 1, actual);
+    }
+
+    @Test
+    public void testDeleteSubCategory() throws Exception {
+        String category = "Sports";
+        String subCategory = "Football";
+
+        assertTrue(quizEJB.createCategory(category));
+        assertTrue(quizEJB.createSubCategory(category, subCategory));
+
+        int expected = quizEJB.getSubCategories(category).size();
+        assertEquals(1, quizEJB.deleteSubCategory(subCategory));
+        int actual = quizEJB.getSubSubCategories(category).size();
+
+        assertEquals(expected - 1, actual);
     }
 
     @Test
@@ -123,13 +150,29 @@ public class QuizEJBTest {
     }
 
     @Test
+    public void testDeleteSubSubCategory() throws Exception {
+        String category = "Sports";
+        String subCategory = "Football";
+        String subSubCategory = "Premier League";
+
+        createCategories(category, subCategory, subSubCategory);
+
+        int expected = quizEJB.getSubSubCategories(subCategory).size();
+        assertEquals(1, quizEJB.deleteSubSubCategory(subSubCategory));
+        int actual = quizEJB.getSubSubCategories(subCategory).size();
+
+        assertEquals(expected - 1, actual);
+    }
+
+    @Test
     public void testAddQuizQuestion() throws Exception {
         createCategories("Sports", "Football", "Premier League");
 
         List<String> answers = Arrays.asList("David Beckham", "Jimmy Floyd Hasselbaink", "Eric Cantona", "Alan Shearer");
         String correctAnswer = "Alan Shearer";
 
-        assertTrue(quizEJB.createQuestion("Premier League", "Who is PL all-time topscorer?", answers, correctAnswer));
+        Long id = quizEJB.createQuestion("Premier League", "Who is PL all-time topscorer?", answers, correctAnswer);
+        assertNotNull(id);
     }
 
     @Test
@@ -139,7 +182,8 @@ public class QuizEJBTest {
         List<String> answers = Arrays.asList("David Beckham", "Jimmy Floyd Hasselbaink", "Eric Cantona", "Alan Shearer");
         String correctAnswer = "Alan Shearer";
 
-        assertTrue(quizEJB.createQuestion("Premier League", "Who is PL all-time topscorer?", answers, correctAnswer));
+        Long id = quizEJB.createQuestion("Premier League", "Who is PL all-time topscorer?", answers, correctAnswer);
+        assertNotNull(id);
 
         Question q = quizEJB.getQuestion("Premier League");
 

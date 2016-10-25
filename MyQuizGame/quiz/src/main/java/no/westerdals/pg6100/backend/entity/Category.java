@@ -19,7 +19,7 @@ public class Category {
     @Id
     private String categoryName;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentCategory")
     private List<SubCategory> subCategories;
 
 

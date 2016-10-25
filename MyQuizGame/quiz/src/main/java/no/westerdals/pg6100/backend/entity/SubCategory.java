@@ -22,7 +22,7 @@ public class SubCategory {
     @ManyToOne
     private Category parentCategory;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentSubCategory")
     private List<SubSubCategory> subSubCategories;
 
 

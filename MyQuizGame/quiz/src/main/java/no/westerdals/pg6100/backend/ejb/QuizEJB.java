@@ -81,15 +81,15 @@ public class QuizEJB {
         return true;
     }
 
-    public boolean createQuestion(String subSubCategory, String question, List<String> answers, String correctAnswer) {
+    public Long createQuestion(String subSubCategory, String question, List<String> answers, String correctAnswer) {
         if (!validInput(subSubCategory, question, correctAnswer) || answers == null) {
-            return false;
+            return null;
         }
 
         SubSubCategory subSubCategoryExist = em.find(SubSubCategory.class, formatInput(subSubCategory));
 
         if (subSubCategoryExist == null) {
-            return false;
+            return null;
         }
 
         Question q = new Question();
@@ -100,13 +100,20 @@ public class QuizEJB {
 
         em.persist(q);
         subSubCategoryExist.getQuestions().add(q);
-        return true;
+        return q.getId();
     }
 
     public List<Category> getCategories() {
         Query query = em.createNamedQuery(Category.GET_CATEGORIES);
 
         return query.getResultList();
+    }
+
+    public int deleteCategory(String categoryName) {
+        Query query = em.createQuery("delete from Category c where c.categoryName = ?1");
+        query.setParameter(1, formatInput(categoryName));
+
+        return query.executeUpdate();
     }
 
     public List<SubCategory> getSubCategories(String category) {
@@ -122,6 +129,13 @@ public class QuizEJB {
         return query.getResultList();
     }
 
+    public int deleteSubCategory(String categoryName) {
+        Query query = em.createQuery("delete from SubCategory s where s.categoryName = ?1");
+        query.setParameter(1, formatInput(categoryName));
+
+        return query.executeUpdate();
+    }
+
     public List<SubSubCategory> getSubSubCategories(String subCategory) {
         Query query = em.createNamedQuery(SubSubCategory.GET_SUBSUBCATEGORIES);
         query.setParameter(1, formatInput(subCategory));
@@ -135,12 +149,26 @@ public class QuizEJB {
         return query.getResultList();
     }
 
+    public int deleteSubSubCategory(String categoryName) {
+        Query query = em.createQuery("delete from SubSubCategory s where s.categoryName = ?1");
+        query.setParameter(1, formatInput(categoryName));
+
+        return query.executeUpdate();
+    }
+
     public Question getQuestion(String subSubCategory) {
         Query query = em.createQuery("select q from Question q where q.parentSubSubCategory.categoryName = ?1 order by random()");
         query.setParameter(1, formatInput(subSubCategory));
         query.setMaxResults(1);
 
         return (Question) query.getSingleResult();
+    }
+
+    public int deleteQuestion(Long id) {
+        Query query = em.createQuery("delete from Question q where q.id = ?1");
+        query.setParameter(1, id);
+
+        return query.executeUpdate();
     }
 
     private boolean validInput(String... input) {

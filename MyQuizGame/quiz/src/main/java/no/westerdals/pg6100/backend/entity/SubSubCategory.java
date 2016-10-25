@@ -25,7 +25,7 @@ public class SubSubCategory {
     @ManyToOne
     private SubCategory parentSubCategory;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentSubSubCategory")
     private List<Question> questions;
 
 
