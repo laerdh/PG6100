@@ -2,8 +2,6 @@ package no.westerdals.pg6100.backend.ejb;
 
 import no.westerdals.pg6100.backend.entity.Category;
 import no.westerdals.pg6100.backend.entity.Question;
-import no.westerdals.pg6100.backend.entity.SubCategory;
-import no.westerdals.pg6100.backend.entity.SubSubCategory;
 import no.westerdals.pg6100.backend.utils.DeleterEJB;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -190,10 +188,32 @@ public class QuizEJBTest {
         assertEquals(correctAnswer, q.getCorrectAnswer());
     }
 
+    @Test
+    public void testDeleteQuizQuestion() throws Exception {
+        Long id = createQuizQuestion();
+
+        int expected = quizEJB.getAllQuestions().size();
+        assertEquals(1, quizEJB.deleteQuestion(id));
+        int actual = quizEJB.getAllQuestions().size();
+
+        assertEquals(expected - 1, actual);
+    }
+
     public void createCategories(String category, String subCategory, String subSubCategory) throws Exception {
         quizEJB.createCategory(category);
         quizEJB.createSubCategory(category, subCategory);
         quizEJB.createSubSubCategory(subCategory, subSubCategory);
+    }
+
+    public Long createQuizQuestion() throws Exception {
+        createCategories("Sports", "Football", "Premier League");
+
+        List<String> answers = Arrays.asList("David Beckham", "Jimmy Floyd Hasselbaink", "Eric Cantona", "Alan Shearer");
+        String correctAnswer = "Alan Shearer";
+
+        Long id = quizEJB.createQuestion("Premier League", "Who is PLs all-time topscorer?", answers, correctAnswer);
+
+        return id;
     }
 
 }

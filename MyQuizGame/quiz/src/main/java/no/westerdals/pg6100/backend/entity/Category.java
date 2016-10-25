@@ -1,6 +1,7 @@
 package no.westerdals.pg6100.backend.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class Category {
     public static final String GET_CATEGORY = "GET_CATEGORY";
 
     @Id
+    @Size(min = 1, max = 256)
     private String categoryName;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentCategory")

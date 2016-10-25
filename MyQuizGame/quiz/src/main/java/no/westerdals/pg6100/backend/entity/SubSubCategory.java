@@ -1,6 +1,7 @@
 package no.westerdals.pg6100.backend.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class SubSubCategory {
     public static final String GET_SUBSUBCATEGORY = "GET_SUBSUBCATEGORY";
 
     @Id
+    @Size(min = 1, max = 256)
     private String categoryName;
 
     @ManyToOne

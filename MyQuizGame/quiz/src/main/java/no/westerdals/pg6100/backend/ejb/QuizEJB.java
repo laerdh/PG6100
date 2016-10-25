@@ -157,18 +157,31 @@ public class QuizEJB {
     }
 
     public Question getQuestion(String subSubCategory) {
-        Query query = em.createQuery("select q from Question q where q.parentSubSubCategory.categoryName = ?1 order by random()");
+        Query query = em.createNamedQuery(Question.GET_CATEGORY_QUESTIONS);
         query.setParameter(1, formatInput(subSubCategory));
         query.setMaxResults(1);
 
         return (Question) query.getSingleResult();
     }
 
-    public int deleteQuestion(Long id) {
-        Query query = em.createQuery("delete from Question q where q.id = ?1");
-        query.setParameter(1, id);
+    public List<Question> getAllQuestions() {
+        Query query = em.createNamedQuery(Question.GET_ALL_QUESTIONS);
 
-        return query.executeUpdate();
+        return query.getResultList();
+    }
+
+    public int deleteQuestion(Long id) {
+        // Must delete ElementCollection manually
+        Question q = em.find(Question.class, id);
+
+        if (q == null) {
+            return 0;
+        }
+
+        q.getAnswers().clear();
+        em.remove(q);
+
+        return 1;
     }
 
     private boolean validInput(String... input) {
