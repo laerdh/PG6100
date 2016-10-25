@@ -1,6 +1,5 @@
 package no.westerdals.pg6100.backend.entity;
 
-import javax.inject.Named;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
