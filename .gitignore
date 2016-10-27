@@ -1,5 +1,7 @@
 *.iml
 *.class
+*.DS_Store
+.DS_Store
 MyQuizGame/quiz/target/
 MyQuizGame/restAPI/target/
 MyQuizGame/report/target
