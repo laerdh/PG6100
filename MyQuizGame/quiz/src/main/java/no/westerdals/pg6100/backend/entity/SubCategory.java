@@ -9,15 +9,26 @@ import java.util.List;
 @NamedQueries({
     @NamedQuery(name = SubCategory.GET_ALL_SUBCATEGORIES,
         query = "select s from SubCategory s"),
-    @NamedQuery(name = SubCategory.GET_SUBCATEGORIES,
-        query = "select s from SubCategory s where s.parentCategory.categoryName = ?1")
+    @NamedQuery(name = SubCategory.GET_SUBCATEGORY_BY_ID,
+        query = "select s from SubCategory s where s.id = ?1"),
+    @NamedQuery(name = SubCategory.GET_SUBCATEGORY_BY_NAME,
+        query = "select s from SubCategory s where s.categoryName = ?1"),
+    @NamedQuery(name = SubCategory.GET_SUBCATEGORIES_BY_PARENT_NAME,
+        query = "select s from SubCategory s where s.parentCategory.categoryName = ?1"),
+    @NamedQuery(name = SubCategory.GET_SUBCATEGORIES_BY_PARENT_ID,
+        query = "select s from SubCategory s where s.parentCategory.id = ?1")
 })
 public class SubCategory {
 
     public static final String GET_ALL_SUBCATEGORIES = "GET_ALL_SUBCATEGORIES";
-    public static final String GET_SUBCATEGORIES = "GET_SUBCATEGORIES";
+    public static final String GET_SUBCATEGORY_BY_ID = "GET_SUBCATEGORY";
+    public static final String GET_SUBCATEGORY_BY_NAME = "GET_SUBCATEGORY_BY_NAME";
+    public static final String GET_SUBCATEGORIES_BY_PARENT_NAME = "GET_SUBCATEGORIES_BY_PARENT_NAME";
+    public static final String GET_SUBCATEGORIES_BY_PARENT_ID = "GET_SUBCATEGORIES_BY_PARENT_ID";
 
-    @Id
+    @Id @GeneratedValue
+    private Long id;
+
     @Size(min = 1, max = 256)
     private String categoryName;
 
@@ -30,6 +41,10 @@ public class SubCategory {
 
     public SubCategory() {}
 
+
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
 
     public String getCategoryName() { return categoryName; }
 

@@ -9,15 +9,20 @@ import java.util.List;
 @NamedQueries({
     @NamedQuery(name = Category.GET_CATEGORIES,
             query = "select c from Category c"),
-    @NamedQuery(name = Category.GET_CATEGORY,
-            query = "select c from Category c where c.categoryName = ?1")
+    @NamedQuery(name = Category.GET_CATEGORY_BY_NAME,
+            query = "select c from Category c where c.categoryName = ?1"),
+    @NamedQuery(name = Category.GET_CATEGORY_BY_ID,
+            query = "select c from Category c where c.id = ?1")
 })
 public class Category {
 
     public static final String GET_CATEGORIES = "GET_CATEGORIES";
-    public static final String GET_CATEGORY = "GET_CATEGORY";
+    public static final String GET_CATEGORY_BY_NAME = "GET_CATEGORY_BY_CATEGORY_NAME";
+    public static final String GET_CATEGORY_BY_ID = "GET_CATEGORY_BY_CATEGORY_ID";
 
-    @Id
+    @Id @GeneratedValue
+    private Long id;
+
     @Size(min = 1, max = 256)
     private String categoryName;
 
@@ -27,6 +32,10 @@ public class Category {
 
     public Category() {}
 
+
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
 
     public String getCategoryName() { return categoryName; }
 

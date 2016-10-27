@@ -39,13 +39,13 @@ public class CategoryEJBTest {
     @Before
     @After
     public void emptyDatabase() throws Exception {
-        categoryEJB.getCategories().forEach(c -> deleterEJB.deleteEntityById(Category.class, c.getCategoryName()));
+        categoryEJB.getCategories().forEach(c -> deleterEJB.deleteEntityById(Category.class, c.getId()));
     }
 
     @Test
     public void testAddCategory() throws Exception {
         int expected = categoryEJB.getCategories().size();
-        assertTrue(categoryEJB.createCategory("Sports"));
+        assertNotNull(categoryEJB.createCategory("Sports"));
 
         int actual = categoryEJB.getCategories().size();
         assertEquals(expected + 1, actual);
@@ -53,18 +53,18 @@ public class CategoryEJBTest {
 
     @Test
     public void testAddCategoryWithNullShouldFail() throws Exception {
-        assertFalse(categoryEJB.createCategory(null));
+        assertNull(categoryEJB.createCategory(null));
     }
 
     @Test
     public void testAddCategoryWithEmptyStringShouldFail() throws Exception {
-        assertFalse(categoryEJB.createCategory(""));
+        assertNull(categoryEJB.createCategory(""));
     }
 
     @Test
     public void testDeleteCategory() throws Exception {
         String category = "Sports";
-        assertTrue(categoryEJB.createCategory(category));
+        assertNotNull(categoryEJB.createCategory(category));
 
         int expected = categoryEJB.getCategories().size();
         assertEquals(1, categoryEJB.deleteCategory(category));
@@ -78,11 +78,11 @@ public class CategoryEJBTest {
         String category = "Sports";
         String subCategory = "Football";
 
-        assertTrue(categoryEJB.createCategory(category));
-        int expected = categoryEJB.getSubCategories(category).size();
+        assertNotNull(categoryEJB.createCategory(category));
+        int expected = categoryEJB.getSubCategoriesByParentName(category).size();
 
-        assertTrue(categoryEJB.createSubCategory(category, subCategory));
-        int actual = categoryEJB.getSubCategories(category).size();
+        assertNotNull(categoryEJB.createSubCategory(category, subCategory));
+        int actual = categoryEJB.getSubCategoriesByParentName(category).size();
 
         assertEquals(expected + 1, actual);
     }
@@ -90,23 +90,23 @@ public class CategoryEJBTest {
     @Test
     public void testAddSubCategoryWithNullShouldFail() throws Exception {
         createCategories("Sports", "Football", "Premier League");
-        assertFalse(categoryEJB.createSubCategory("Sports", null));
+        assertNull(categoryEJB.createSubCategory("Sports", null));
     }
 
     @Test
     public void testAddSubCategoryWithEmptyStringShouldFail() throws Exception {
         createCategories("Sports", "Football", "Premier League");
-        assertFalse(categoryEJB.createSubCategory("Sports", ""));
+        assertNull(categoryEJB.createSubCategory("Sports", ""));
     }
 
     @Test
     public void testAddSubCategoryToNullCategoryShouldFail() throws Exception {
-        assertFalse(categoryEJB.createSubCategory(null, "Basketball"));
+        assertNull(categoryEJB.createSubCategory(null, "Basketball"));
     }
 
     @Test
     public void testAddSubCategoryToEmptyCategoryShouldFail() throws Exception {
-        assertFalse(categoryEJB.createSubCategory("", "Football"));
+        assertNull(categoryEJB.createSubCategory("", "Football"));
     }
 
     @Test
@@ -114,12 +114,12 @@ public class CategoryEJBTest {
         String category = "Sports";
         String subCategory = "Football";
 
-        assertTrue(categoryEJB.createCategory(category));
-        assertTrue(categoryEJB.createSubCategory(category, subCategory));
+        assertNotNull(categoryEJB.createCategory(category));
+        assertNotNull(categoryEJB.createSubCategory(category, subCategory));
 
-        int expected = categoryEJB.getSubCategories(category).size();
+        int expected = categoryEJB.getSubCategoriesByParentName(category).size();
         assertEquals(1, categoryEJB.deleteSubCategory(subCategory));
-        int actual = categoryEJB.getSubSubCategories(category).size();
+        int actual = categoryEJB.getSubSubCategoriesByParentName(category).size();
 
         assertEquals(expected - 1, actual);
     }
@@ -143,11 +143,11 @@ public class CategoryEJBTest {
         String subCategory = "Football";
         String subSubCategory = "Premier League";
 
-        assertTrue(categoryEJB.createCategory(category));
-        assertTrue(categoryEJB.createSubCategory(category, subCategory));
+        assertNotNull(categoryEJB.createCategory(category));
+        assertNotNull(categoryEJB.createSubCategory(category, subCategory));
 
         int expected = categoryEJB.getAllSubSubCategories().size();
-        assertTrue(categoryEJB.createSubSubCategory(subCategory, subSubCategory));
+        assertNotNull(categoryEJB.createSubSubCategory(subCategory, subSubCategory));
         int actual = categoryEJB.getAllSubSubCategories().size();
 
         assertEquals(expected + 1, actual);
@@ -158,10 +158,10 @@ public class CategoryEJBTest {
         String category = "Sports";
         String subCategory = "Football";
 
-        assertTrue(categoryEJB.createCategory(category));
-        assertTrue(categoryEJB.createSubCategory(category, subCategory));
+        assertNotNull(categoryEJB.createCategory(category));
+        assertNotNull(categoryEJB.createSubCategory(category, subCategory));
 
-        assertFalse(categoryEJB.createSubSubCategory(subCategory, ""));
+        assertNull(categoryEJB.createSubSubCategory(subCategory, ""));
     }
 
     @Test
@@ -169,16 +169,16 @@ public class CategoryEJBTest {
         String category = "Sports";
         String subCategory = "Football";
 
-        assertTrue(categoryEJB.createCategory(category));
-        assertTrue(categoryEJB.createSubCategory(category, subCategory));
+        assertNotNull(categoryEJB.createCategory(category));
+        assertNotNull(categoryEJB.createSubCategory(category, subCategory));
 
-        assertFalse(categoryEJB.createSubSubCategory(subCategory, null));
+        assertNull(categoryEJB.createSubSubCategory(subCategory, null));
     }
 
     @Test
     public void testAddSubSubCategoryToInvalidSubCategoryShouldFail() throws Exception {
-        assertFalse(categoryEJB.createSubSubCategory("", "Premier League"));
-        assertFalse(categoryEJB.createSubSubCategory(null, "Premier League"));
+        assertNull(categoryEJB.createSubSubCategory("", "Premier League"));
+        assertNull(categoryEJB.createSubSubCategory(null, "Premier League"));
     }
 
     @Test
@@ -196,12 +196,12 @@ public class CategoryEJBTest {
 
     @Test
     public void testGetSubSubCategory() throws Exception {
-        int expected = categoryEJB.getSubSubCategories("Football").size();
+        int expected = categoryEJB.getSubSubCategoriesByParentName("Football").size();
 
         createCategories("Sports", "Football", "Premier League");
         createCategories("Sports", "Football", "Champions League");
 
-        int actual = categoryEJB.getSubSubCategories("Football").size();
+        int actual = categoryEJB.getSubSubCategoriesByParentName("Football").size();
 
         assertEquals(expected + 2, actual);
     }
@@ -214,9 +214,9 @@ public class CategoryEJBTest {
 
         createCategories(category, subCategory, subSubCategory);
 
-        int expected = categoryEJB.getSubSubCategories(subCategory).size();
+        int expected = categoryEJB.getSubSubCategoriesByParentName(subCategory).size();
         assertEquals(1, categoryEJB.deleteSubSubCategory(subSubCategory));
-        int actual = categoryEJB.getSubSubCategories(subCategory).size();
+        int actual = categoryEJB.getSubSubCategoriesByParentName(subCategory).size();
 
         assertEquals(expected - 1, actual);
     }

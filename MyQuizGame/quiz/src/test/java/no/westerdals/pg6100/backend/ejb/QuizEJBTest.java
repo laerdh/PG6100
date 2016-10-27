@@ -44,7 +44,7 @@ public class QuizEJBTest {
     @Before
     @After
     public void emptyDatabase() throws Exception {
-        categoryEJB.getCategories().forEach(c -> deleterEJB.deleteEntityById(Category.class, c.getCategoryName()));
+        categoryEJB.getCategories().forEach(c -> deleterEJB.deleteEntityById(Category.class, c.getId()));
     }
 
     @Test

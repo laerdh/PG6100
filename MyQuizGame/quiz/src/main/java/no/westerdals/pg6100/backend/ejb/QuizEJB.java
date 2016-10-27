@@ -3,6 +3,7 @@ package no.westerdals.pg6100.backend.ejb;
 import no.westerdals.pg6100.backend.entity.Question;
 import no.westerdals.pg6100.backend.entity.SubSubCategory;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,6 +19,9 @@ public class QuizEJB {
     @PersistenceContext
     private EntityManager em;
 
+    @EJB
+    private CategoryEJB categoryEJB;
+
 
     public QuizEJB() {}
 
@@ -28,7 +32,7 @@ public class QuizEJB {
             return null;
         }
 
-        SubSubCategory subSubCategoryExist = em.find(SubSubCategory.class, formatInput(subSubCategory));
+        SubSubCategory subSubCategoryExist = categoryEJB.getSubSubCategoryByName(formatInput(subSubCategory));
 
         if (subSubCategoryExist == null) {
             return null;
@@ -42,6 +46,7 @@ public class QuizEJB {
 
         em.persist(q);
         subSubCategoryExist.getQuestions().add(q);
+        
         return q.getId();
     }
 

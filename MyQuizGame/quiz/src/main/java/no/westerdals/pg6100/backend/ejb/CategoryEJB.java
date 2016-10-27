@@ -8,7 +8,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -25,33 +24,34 @@ public class CategoryEJB {
     public CategoryEJB() {}
 
 
-    public boolean createCategory(String category) {
+    public Long createCategory(String category) {
         if (!validInput(category)){
-            return false;
+            return null;
         }
 
-        Category exist = em.find(Category.class, formatInput(category));
+        Category exist = getCategory(formatInput(category));
 
         if (exist != null) {
-            return false;
+            return null;
         }
 
         Category c = new Category();
         c.setCategoryName(formatInput(category));
         em.persist(c);
-        return true;
+
+        return c.getId();
     }
 
-    public boolean createSubCategory(String parentCategory, String subCategory) {
+    public Long createSubCategory(String parentCategory, String subCategory) {
         if (!validInput(parentCategory, subCategory)) {
-            return false;
+            return null;
         }
 
-        Category categoryExist = em.find(Category.class, formatInput(parentCategory));
-        SubCategory subCategoryExist = em.find(SubCategory.class, formatInput(subCategory));
+        Category categoryExist = getCategory(formatInput(parentCategory));
+        SubCategory subCategoryExist = getSubCategoryByName(formatInput(subCategory));
 
         if (categoryExist == null || subCategoryExist != null) {
-            return false;
+            return null;
         }
 
         SubCategory c = new SubCategory();
@@ -60,19 +60,20 @@ public class CategoryEJB {
 
         em.persist(c);
         categoryExist.getSubCategories().add(c);
-        return true;
+
+        return c.getId();
     }
 
-    public boolean createSubSubCategory(String parentCategory, String subSubCategory) {
+    public Long createSubSubCategory(String parentCategory, String subSubCategory) {
         if (!validInput(parentCategory, subSubCategory)) {
-            return false;
+            return null;
         }
 
-        SubCategory subCategoryExist = em.find(SubCategory.class, formatInput(parentCategory));
-        SubSubCategory subSubCategoryExist = em.find(SubSubCategory.class, formatInput(subSubCategory));
+        SubCategory subCategoryExist = getSubCategoryByName(formatInput(parentCategory));
+        SubSubCategory subSubCategoryExist = getSubSubCategoryByName(formatInput(subSubCategory));
 
         if (subCategoryExist == null || subSubCategoryExist != null) {
-            return false;
+            return null;
         }
 
         SubSubCategory c = new SubSubCategory();
@@ -82,13 +83,36 @@ public class CategoryEJB {
 
         em.persist(c);
         subCategoryExist.getSubSubCategories().add(c);
-        return true;
+
+        return c.getId();
     }
 
     public List<Category> getCategories() {
         Query query = em.createNamedQuery(Category.GET_CATEGORIES);
 
         return query.getResultList();
+    }
+
+    public Category getCategory(String categoryName) {
+        Query query = em.createNamedQuery(Category.GET_CATEGORY_BY_NAME);
+        query.setParameter(1, formatInput(categoryName));
+
+        try {
+            return (Category) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Category getCategory(Long id) {
+        Query query = em.createNamedQuery(Category.GET_CATEGORY_BY_ID);
+        query.setParameter(1, id);
+
+        try {
+            return (Category) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public int deleteCategory(String categoryName) {
@@ -98,11 +122,40 @@ public class CategoryEJB {
         return query.executeUpdate();
     }
 
-    public List<SubCategory> getSubCategories(String category) {
-        Query query = em.createNamedQuery(SubCategory.GET_SUBCATEGORIES);
+    public List<SubCategory> getSubCategoriesByParentName(String category) {
+        Query query = em.createNamedQuery(SubCategory.GET_SUBCATEGORIES_BY_PARENT_NAME);
         query.setParameter(1, formatInput(category));
 
         return query.getResultList();
+    }
+
+    public List<SubCategory> getSubCategoriesByParentId(Long categoryId) {
+        Query query = em.createNamedQuery(SubCategory.GET_SUBCATEGORIES_BY_PARENT_ID);
+        query.setParameter(1, categoryId);
+
+        return query.getResultList();
+    }
+
+    public SubCategory getSubCategorybyId(Long id) {
+        Query query = em.createNamedQuery(SubCategory.GET_SUBCATEGORY_BY_ID);
+        query.setParameter(1, id);
+
+        try {
+            return (SubCategory) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public SubCategory getSubCategoryByName(String categoryName) {
+        Query query = em.createNamedQuery(SubCategory.GET_SUBCATEGORY_BY_NAME);
+        query.setParameter(1, formatInput(categoryName));
+
+        try {
+            return (SubCategory) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public List<SubCategory> getAllSubCategories() {
@@ -118,11 +171,36 @@ public class CategoryEJB {
         return query.executeUpdate();
     }
 
-    public List<SubSubCategory> getSubSubCategories(String subCategory) {
-        Query query = em.createNamedQuery(SubSubCategory.GET_SUBSUBCATEGORIES);
+    public List<SubSubCategory> getSubSubCategoriesByParentName(String subCategory) {
+        Query query = em.createNamedQuery(SubSubCategory.GET_SUBSUBCATEGORIES_BY_PARENT_NAME);
         query.setParameter(1, formatInput(subCategory));
 
         return query.getResultList();
+    }
+
+    public List<SubSubCategory> getSubSubCategoriesByParentID(Long id) {
+        Query query = em.createNamedQuery(SubSubCategory.GET_SUBSUBCATEGORIES_BY_PARENT_ID);
+        query.setParameter(1, id);
+
+        return query.getResultList();
+    }
+
+    public SubSubCategory getSubSubCategoryById(Long id) {
+        Query query = em.createNamedQuery(SubSubCategory.GET_SUBSUBCATEGORY_BY_ID);
+        query.setParameter(1, id);
+
+        return (SubSubCategory) query.getSingleResult();
+    }
+
+    public SubSubCategory getSubSubCategoryByName(String categoryName) {
+        Query query = em.createNamedQuery(SubSubCategory.GET_SUBSUBCATEGORY_BY_NAME);
+        query.setParameter(1, formatInput(categoryName));
+
+        try {
+            return (SubSubCategory) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public List<SubSubCategory> getAllSubSubCategories() {
