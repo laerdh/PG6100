@@ -101,9 +101,9 @@ public class QuizEJBTest {
     }
 
     public void createCategories(String category, String subCategory, String subSubCategory) throws Exception {
-        categoryEJB.createCategory(category);
-        categoryEJB.createSubCategory(category, subCategory);
-        categoryEJB.createSubSubCategory(subCategory, subSubCategory);
+        Long id = categoryEJB.createCategory(category);
+        Long subCategoryId = categoryEJB.createSubCategory(id, subCategory);
+        categoryEJB.createSubSubCategory(subCategoryId, subSubCategory);
     }
 
     public Long createQuizQuestion() throws Exception {

@@ -42,12 +42,12 @@ public class CategoryEJB {
         return c.getId();
     }
 
-    public Long createSubCategory(String parentCategory, String subCategory) {
-        if (!validInput(parentCategory, subCategory)) {
+    public Long createSubCategory(Long parentId, String subCategory) {
+        if (!validInput(subCategory) || parentId == null) {
             return null;
         }
 
-        Category categoryExist = getCategory(formatInput(parentCategory));
+        Category categoryExist = em.find(Category.class, parentId);
         SubCategory subCategoryExist = getSubCategoryByName(formatInput(subCategory));
 
         if (categoryExist == null || subCategoryExist != null) {
@@ -64,12 +64,12 @@ public class CategoryEJB {
         return c.getId();
     }
 
-    public Long createSubSubCategory(String parentCategory, String subSubCategory) {
-        if (!validInput(parentCategory, subSubCategory)) {
+    public Long createSubSubCategory(Long parentId, String subSubCategory) {
+        if (!validInput(subSubCategory) || parentId == null) {
             return null;
         }
 
-        SubCategory subCategoryExist = getSubCategoryByName(formatInput(parentCategory));
+        SubCategory subCategoryExist = em.find(SubCategory.class, parentId);
         SubSubCategory subSubCategoryExist = getSubSubCategoryByName(formatInput(subSubCategory));
 
         if (subCategoryExist == null || subSubCategoryExist != null) {
@@ -115,9 +115,9 @@ public class CategoryEJB {
         }
     }
 
-    public int deleteCategory(String categoryName) {
-        Query query = em.createQuery("delete from Category c where c.categoryName = ?1");
-        query.setParameter(1, formatInput(categoryName));
+    public int deleteCategory(Long id) {
+        Query query = em.createQuery("delete from Category c where c.id = ?1");
+        query.setParameter(1, id);
 
         return query.executeUpdate();
     }
@@ -136,9 +136,10 @@ public class CategoryEJB {
         return query.getResultList();
     }
 
-    public SubCategory getSubCategorybyId(Long id) {
-        Query query = em.createNamedQuery(SubCategory.GET_SUBCATEGORY_BY_ID);
-        query.setParameter(1, id);
+    public SubCategory getSubCategoryByParentIdAndId(Long parentId, Long id) {
+        Query query = em.createQuery("select s from SubCategory s where s.parentCategory.id = ?1 AND s.id = ?2");
+        query.setParameter(1, parentId);
+        query.setParameter(2, id);
 
         try {
             return (SubCategory) query.getSingleResult();
@@ -164,9 +165,9 @@ public class CategoryEJB {
         return query.getResultList();
     }
 
-    public int deleteSubCategory(String categoryName) {
-        Query query = em.createQuery("delete from SubCategory s where s.categoryName = ?1");
-        query.setParameter(1, formatInput(categoryName));
+    public int deleteSubCategory(Long id) {
+        Query query = em.createQuery("delete from SubCategory s where s.id = ?1");
+        query.setParameter(1, id);
 
         return query.executeUpdate();
     }
@@ -183,6 +184,27 @@ public class CategoryEJB {
         query.setParameter(1, id);
 
         return query.getResultList();
+    }
+
+    public List<SubSubCategory> getSubSubCategoryByRootIdAndParentId(Long rootId, Long parentId) {
+        Query query = em.createQuery("select s from SubSubCategory s where s.parentSubCategory.parentCategory.id = ?1 AND s.parentSubCategory.id = ?2");
+        query.setParameter(1, rootId);
+        query.setParameter(2, parentId);
+
+        return query.getResultList();
+    }
+
+    public SubSubCategory getSubSubCategoryByRootParentAndId(Long rootId, Long parentId, Long id) {
+        Query query = em.createQuery("select s from SubSubCategory s where s.parentSubCategory.parentCategory.id = ?1 AND s.parentSubCategory.id = ?2 AND s.id = ?3");
+        query.setParameter(1, rootId);
+        query.setParameter(2, parentId);
+        query.setParameter(3, id);
+
+        try {
+            return (SubSubCategory) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public SubSubCategory getSubSubCategoryById(Long id) {
@@ -209,9 +231,9 @@ public class CategoryEJB {
         return query.getResultList();
     }
 
-    public int deleteSubSubCategory(String categoryName) {
-        Query query = em.createQuery("delete from SubSubCategory s where s.categoryName = ?1");
-        query.setParameter(1, formatInput(categoryName));
+    public int deleteSubSubCategory(Long id) {
+        Query query = em.createQuery("delete from SubSubCategory s where s.id = ?1");
+        query.setParameter(1, id);
 
         return query.executeUpdate();
     }

@@ -46,7 +46,7 @@ public class QuizEJB {
 
         em.persist(q);
         subSubCategoryExist.getQuestions().add(q);
-        
+
         return q.getId();
     }
 
