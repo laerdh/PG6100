@@ -136,10 +136,9 @@ public class CategoryEJB {
         return query.getResultList();
     }
 
-    public SubCategory getSubCategoryByParentIdAndId(Long parentId, Long id) {
-        Query query = em.createQuery("select s from SubCategory s where s.parentCategory.id = ?1 AND s.id = ?2");
-        query.setParameter(1, parentId);
-        query.setParameter(2, id);
+    public SubCategory getSubCategoryById(Long id) {
+        Query query = em.createNamedQuery(SubCategory.GET_SUBCATEGORY_BY_ID);
+        query.setParameter(1, id);
 
         try {
             return (SubCategory) query.getSingleResult();
@@ -184,27 +183,6 @@ public class CategoryEJB {
         query.setParameter(1, id);
 
         return query.getResultList();
-    }
-
-    public List<SubSubCategory> getSubSubCategoryByRootIdAndParentId(Long rootId, Long parentId) {
-        Query query = em.createQuery("select s from SubSubCategory s where s.parentSubCategory.parentCategory.id = ?1 AND s.parentSubCategory.id = ?2");
-        query.setParameter(1, rootId);
-        query.setParameter(2, parentId);
-
-        return query.getResultList();
-    }
-
-    public SubSubCategory getSubSubCategoryByRootParentAndId(Long rootId, Long parentId, Long id) {
-        Query query = em.createQuery("select s from SubSubCategory s where s.parentSubCategory.parentCategory.id = ?1 AND s.parentSubCategory.id = ?2 AND s.id = ?3");
-        query.setParameter(1, rootId);
-        query.setParameter(2, parentId);
-        query.setParameter(3, id);
-
-        try {
-            return (SubSubCategory) query.getSingleResult();
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public SubSubCategory getSubSubCategoryById(Long id) {

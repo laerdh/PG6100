@@ -26,15 +26,15 @@ public class QuizEJB {
     public QuizEJB() {}
 
 
-    public Long createQuestion(String subSubCategory, String question,
-                               List<String> answers, String correctAnswer) {
-        if (!validInput(subSubCategory, question, correctAnswer) || answers == null) {
+    public Long createQuestion(Long subSubCategoryId, String question,
+                               List<String> answers, Integer correctAnswer) {
+        if (!validInput(question) || subSubCategoryId == null || answers == null) {
             return null;
         }
 
-        SubSubCategory subSubCategoryExist = categoryEJB.getSubSubCategoryByName(formatInput(subSubCategory));
+        SubSubCategory subSubCategoryExist = categoryEJB.getSubSubCategoryById(subSubCategoryId);
 
-        if (subSubCategoryExist == null) {
+        if (subSubCategoryExist == null || correctAnswer == null) {
             return null;
         }
 
@@ -50,10 +50,9 @@ public class QuizEJB {
         return q.getId();
     }
 
-    public Question getQuestion(String subSubCategory) {
-        Query query = em.createNamedQuery(Question.GET_CATEGORY_QUESTIONS);
-        query.setParameter(1, formatInput(subSubCategory));
-        query.setMaxResults(1);
+    public Question getQuestion(Long parentId) {
+        Query query = em.createNamedQuery(Question.GET_QUESTION_BY_ID);
+        query.setParameter(1, parentId);
 
         return (Question) query.getSingleResult();
     }

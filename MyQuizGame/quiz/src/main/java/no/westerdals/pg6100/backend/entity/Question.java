@@ -10,12 +10,15 @@ import java.util.List;
 @NamedQueries({
     @NamedQuery(name = Question.GET_ALL_QUESTIONS,
         query = "select q from Question q"),
+    @NamedQuery(name = Question.GET_QUESTION_BY_ID,
+        query = "select q from Question q where q.id = ?1"),
     @NamedQuery(name = Question.GET_CATEGORY_QUESTIONS,
         query = "select q from Question q where q.parentSubSubCategory.categoryName = ?1")
 })
 public class Question {
 
     public static final String GET_ALL_QUESTIONS = "GET_ALL_QUESTIONS";
+    public static final String GET_QUESTION_BY_ID = "GET_QUESTION_BY_ID";
     public static final String GET_CATEGORY_QUESTIONS = "GET_CATEGORY_QUESTIONS";
 
     @Id @GeneratedValue
@@ -26,10 +29,9 @@ public class Question {
     private String question;
 
     @NotNull
-    @Size(min = 1, max = 1024)
-    private String correctAnswer;
+    private Integer correctAnswer;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> answers;
 
     @ManyToOne
@@ -47,9 +49,9 @@ public class Question {
 
     public void setQuestion(String question) { this.question = question; }
 
-    public String getCorrectAnswer() { return correctAnswer; }
+    public Integer getCorrectAnswer() { return correctAnswer; }
 
-    public void setCorrectAnswer(String correctAnswer) { this.correctAnswer = correctAnswer; }
+    public void setCorrectAnswer(Integer correctAnswer) { this.correctAnswer = correctAnswer; }
 
     public List<String> getAnswers() {
         if (answers == null) {

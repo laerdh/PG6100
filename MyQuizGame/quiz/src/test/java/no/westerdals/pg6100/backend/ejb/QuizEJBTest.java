@@ -49,44 +49,45 @@ public class QuizEJBTest {
 
     @Test
     public void testAddQuizQuestion() throws Exception {
-        createCategories("Sports", "Football", "Premier League");
+        Long categoryId = createCategories("Sports", "Football", "Premier League");
 
         List<String> answers = Arrays.asList("David Beckham", "Jimmy Floyd Hasselbaink", "Eric Cantona", "Alan Shearer");
-        String correctAnswer = "Alan Shearer";
+        int correctAnswer = 3;
 
-        Long id = quizEJB.createQuestion("Premier League", "Who is PL all-time topscorer?", answers, correctAnswer);
+        Long id = quizEJB.createQuestion(categoryId, "Who is PL all-time topscorer?", answers, correctAnswer);
         assertNotNull(id);
     }
 
     @Test
     public void testAddQuizQuestionWithEmptyStringShouldFail() throws Exception {
-        createCategories("Sports", "Football", "Premier League");
+        Long categoryId = createCategories("Sports", "Football", "Premier League");
 
-        Long id = quizEJB.createQuestion("Premier League", "", new ArrayList<>(), "");
+        Long id = quizEJB.createQuestion(categoryId, "", new ArrayList<>(), null);
         assertNull(id);
     }
 
     @Test
     public void testAddQuizQuestionWithNullShouldFail() throws Exception {
-        createCategories("Sports", "Football", "Premier League");
+        Long categoryId = createCategories("Sports", "Football", "Premier League");
 
-        Long id = quizEJB.createQuestion("Premier League", null, null, null);
+        Long id = quizEJB.createQuestion(categoryId, null, null, null);
         assertNull(id);
     }
 
     @Test
     public void testGetQuizQuestion() throws Exception {
-        createCategories("Sports", "Football", "Premier League");
+        Long categoryId = createCategories("Sports", "Football", "Premier League");
 
         List<String> answers = Arrays.asList("David Beckham", "Jimmy Floyd Hasselbaink", "Eric Cantona", "Alan Shearer");
-        String correctAnswer = "Alan Shearer";
+        int correctAnswer = 3;
 
-        Long id = quizEJB.createQuestion("Premier League", "Who is PL all-time topscorer?", answers, correctAnswer);
+        Long id = quizEJB.createQuestion(categoryId, "Who is PL all-time topscorer?", answers, correctAnswer);
         assertNotNull(id);
 
-        Question q = quizEJB.getQuestion("Premier League");
+        Question q = quizEJB.getQuestion(id);
 
-        assertEquals(correctAnswer, q.getCorrectAnswer());
+
+        assertEquals(answers.get(correctAnswer), q.getAnswers().get(q.getCorrectAnswer()));
     }
 
     @Test
@@ -100,19 +101,19 @@ public class QuizEJBTest {
         assertEquals(expected - 1, actual);
     }
 
-    public void createCategories(String category, String subCategory, String subSubCategory) throws Exception {
+    public Long createCategories(String category, String subCategory, String subSubCategory) throws Exception {
         Long id = categoryEJB.createCategory(category);
         Long subCategoryId = categoryEJB.createSubCategory(id, subCategory);
-        categoryEJB.createSubSubCategory(subCategoryId, subSubCategory);
+        return categoryEJB.createSubSubCategory(subCategoryId, subSubCategory);
     }
 
     public Long createQuizQuestion() throws Exception {
-        createCategories("Sports", "Football", "Premier League");
+        Long categoryId = createCategories("Sports", "Football", "Premier League");
 
         List<String> answers = Arrays.asList("David Beckham", "Jimmy Floyd Hasselbaink", "Eric Cantona", "Alan Shearer");
-        String correctAnswer = "Alan Shearer";
+        int correctAnswer = 3;
 
-        Long id = quizEJB.createQuestion("Premier League", "Who is PLs all-time topscorer?", answers, correctAnswer);
+        Long id = quizEJB.createQuestion(categoryId, "Who is PLs all-time topscorer?", answers, correctAnswer);
 
         return id;
     }

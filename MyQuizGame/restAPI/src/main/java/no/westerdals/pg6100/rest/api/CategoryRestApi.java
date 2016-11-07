@@ -18,71 +18,33 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 public interface CategoryRestApi {
 
+    // GET
+
     @ApiOperation("Retrieve a list of all the categories")
     @GET
     List<CategoryDto> getCategories();
 
 
     @ApiOperation("Retrieve a category by its id")
-    @Path("/{id}")
+    @Path("/id/{id}")
     @GET
     CategoryDto getCategory(
             @ApiParam("The id of the category")
             @PathParam("id")
-            Long id);
+            Long id
+    );
 
 
     @ApiOperation("Retrieve a list of sub-categories")
-    @Path("/{id}/subcategories")
+    @Path("/id/{id}/subcategories")
     @GET
     List<SubCategoryDto> getSubCategories(
             @ApiParam("The id of the category")
             @PathParam("id")
-            Long id);
+            Long id
+    );
 
-
-    @ApiOperation("Retrieve a sub-category")
-    @Path("/{category_id}/subcategories/{id}")
-    @GET
-    SubCategoryDto getSubCategoryById(
-            @ApiParam("The id of the root category")
-            @PathParam("category_id")
-            Long categoryId,
-
-            @ApiParam("The id of the sub-category")
-            @PathParam("id")
-            Long id);
-
-
-    @ApiOperation("Retrieve a list of sub-sub-categories")
-    @Path("/{category_id}/subcategories/{id}/subsubcategories")
-    @GET
-    List<SubSubCategoryDto> getSubSubCategories(
-            @ApiParam("The id of the root category")
-            @PathParam("category_id")
-            Long categoryId,
-
-            @ApiParam("The id of the sub-category")
-            @PathParam("id")
-            Long id);
-
-
-    @ApiOperation("Retrieve a subsub-category")
-    @Path("/{category_id}/subcategories/{subcategory_id}/subsubcategories/{id}")
-    @GET
-    SubSubCategoryDto getSubSubCategory(
-            @ApiParam("The id of the root category")
-            @PathParam("category_id")
-            Long categoryId,
-
-            @ApiParam("The id of the sub-category")
-            @PathParam("subcategory_id")
-            Long subCategoryId,
-
-            @ApiParam("The id of the subsub-category")
-            @PathParam("id")
-            Long id);
-
+    // POST
 
     @ApiOperation("Create a category")
     @POST
@@ -92,51 +54,13 @@ public interface CategoryRestApi {
             @ApiParam("The name of the category and id. Should not specify id at the time of creation")
             CategoryDto dto);
 
-
-    @ApiOperation("Create a subcategory")
-    @POST
-    @Path("/subcategories")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @ApiResponse(code = 200, message = "The id of the newly created sub-category")
-    Long createSubCategory(
-            @ApiParam("Root category id, the sub-category's name and id. Should not specify id at the time of creation")
-            SubCategoryDto dto);
-
-
-    @ApiOperation("Create a subsub-category")
-    @POST
-    @Path("/subcategories/subsubcategories")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @ApiResponse(code = 200, message = "The id of the newly created subsub-category")
-    Long createSubSubCategory(
-            @ApiParam("The id of the parent category (subcategory), the name of the subsub-category and id. " +
-                    "Should not specify id at the time of creation.")
-            SubSubCategoryDto dto);
-
+    // DELETE
 
     @ApiOperation("Delete a category")
     @DELETE
-    @Path("/{id}")
+    @Path("/id/{id}")
     void deleteCategory(
             @ApiParam("The id of the category")
-            @PathParam("id")
-            Long id);
-
-
-    @ApiOperation("Delete a subcategory")
-    @DELETE
-    @Path("/subcategories/{id}")
-    void deleteSubCategory(
-            @ApiParam("The id of the subcategory")
-            @PathParam("id")
-            Long id);
-
-
-    @ApiOperation("Delete a subsub-category")
-    @DELETE
-    @Path("/subcategories/subsubcategories/{id}")
-    void deleteSubSubCategory(
-            @ApiParam("The id of the subsub-category")
             @PathParam("id")
             Long id);
 }

@@ -1,7 +1,7 @@
 package no.westerdals.pg6100.rest;
 
 import io.swagger.jaxrs.config.BeanConfig;
-import no.westerdals.pg6100.rest.api.CategoryRest;
+import no.westerdals.pg6100.rest.api.implementation.CategoryRest;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
