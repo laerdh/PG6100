@@ -15,12 +15,11 @@ public class QuizConverter {
         Objects.requireNonNull(entity);
 
         QuizDto dto = new QuizDto();
-        dto.id = String.valueOf(entity.getId());
+        dto.id = entity.getId();
         dto.question = entity.getQuestion();
-        dto.correctAnswer = String.valueOf(entity.getCorrectAnswer());
+        dto.correctAnswer = entity.getCorrectAnswer();
         dto.answers =  entity.getAnswers().toString();
-        dto.parentCategoryId = String.valueOf(entity.getParentSubSubCategory().getId());
-        dto.parentCategoryName = entity.getParentSubSubCategory().getCategoryName();
+        dto.parentCategoryId = entity.getParentSubSubCategory().getId();
 
         return dto;
     }

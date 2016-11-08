@@ -21,7 +21,7 @@ import java.util.List;
 public class SubCategory {
 
     public static final String GET_ALL_SUBCATEGORIES = "GET_ALL_SUBCATEGORIES";
-    public static final String GET_SUBCATEGORY_BY_ID = "GET_SUBCATEGORY";
+    public static final String GET_SUBCATEGORY_BY_ID = "GET_SUBCATEGORY_BY_ID";
     public static final String GET_SUBCATEGORY_BY_NAME = "GET_SUBCATEGORY_BY_NAME";
     public static final String GET_SUBCATEGORIES_BY_PARENT_NAME = "GET_SUBCATEGORIES_BY_PARENT_NAME";
     public static final String GET_SUBCATEGORIES_BY_PARENT_ID = "GET_SUBCATEGORIES_BY_PARENT_ID";

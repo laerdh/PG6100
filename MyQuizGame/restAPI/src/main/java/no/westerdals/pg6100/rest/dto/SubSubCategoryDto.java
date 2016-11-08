@@ -7,25 +7,22 @@ import io.swagger.annotations.ApiModelProperty;
 public class SubSubCategoryDto {
 
     @ApiModelProperty("The id of the sub-sub-category")
-    public String id;
+    public Long id;
 
     @ApiModelProperty("The name of the sub-sub-category")
     public String categoryName;
 
     @ApiModelProperty("The id of the parent sub-category")
-    public String parentCategoryId;
+    public Long parentCategoryId;
 
-    @ApiModelProperty("The name of the parent sub-category")
-    public String parentCategoryName;
 
     public SubSubCategoryDto() {}
 
-    public SubSubCategoryDto(String id, String categoryName,
-                             String parentCategoryId, String parentCategoryName) {
+
+    public SubSubCategoryDto(Long id, String categoryName, Long parentCategoryId) {
         this.id = id;
         this.categoryName = categoryName;
         this.parentCategoryId = parentCategoryId;
-        this.parentCategoryName = parentCategoryName;
 
     }
 }

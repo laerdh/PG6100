@@ -2,6 +2,9 @@ package no.westerdals.pg6100.rest;
 
 import io.swagger.jaxrs.config.BeanConfig;
 import no.westerdals.pg6100.rest.api.implementation.CategoryRest;
+import no.westerdals.pg6100.rest.api.implementation.QuizRest;
+import no.westerdals.pg6100.rest.api.implementation.SubCategoryRest;
+import no.westerdals.pg6100.rest.api.implementation.SubSubCategoryRest;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -30,6 +33,9 @@ public class ApplicationConfig extends Application {
         // Define which classes to provide RestAPI
         HashSet<Class<?>> c = new HashSet<>();
         c.add(CategoryRest.class);
+        c.add(SubCategoryRest.class);
+        c.add(SubSubCategoryRest.class);
+        c.add(QuizRest.class);
 
         // Add further configuration to activate Swagger
         c.add(io.swagger.jaxrs.listing.ApiListingResource.class);

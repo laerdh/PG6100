@@ -15,10 +15,9 @@ public class SubCategoryConverter {
         Objects.requireNonNull(entity);
 
         SubCategoryDto dto = new SubCategoryDto();
-        dto.id = String.valueOf(entity.getId());
+        dto.id = entity.getId();
         dto.categoryName = entity.getCategoryName();
-        dto.parentCategoryId = String.valueOf(entity.getParentCategory().getId());
-        dto.parentCategoryName = entity.getParentCategory().getCategoryName();
+        dto.parentCategoryId = entity.getParentCategory().getId();
 
         return dto;
     }

@@ -48,23 +48,14 @@ public class SubCategoryRest implements SubCategoryRestApi {
     // POST
 
     @Override
-    public Long createSubCategory(@ApiParam("Category id, name and id. Should not specify id at time of creation") SubCategoryDto dto) {
+    public Long createSubCategory(@ApiParam("Id, name and category id. Should not specify id at time of creation") SubCategoryDto dto) {
         if (dto.id != null) {
             throw new WebApplicationException("Cannot specify id for newly created subcategory", 400);
         }
 
-        if (dto.parentCategoryId == null) {
-            throw new WebApplicationException("Must specify parent category id", 400);
-        }
-
-        if (dto.categoryName == null || dto.categoryName.isEmpty()) {
-            throw new WebApplicationException("Must specify a category name", 400);
-        }
-
         Long id;
-        Long parentId = Long.parseLong(dto.parentCategoryId);
         try {
-            id = categoryEJB.createSubCategory(parentId, dto.categoryName);
+            id = categoryEJB.createSubCategory(dto.parentCategoryId, dto.categoryName);
         } catch (Exception e) {
             throw WebException.wrapException(e);
         }

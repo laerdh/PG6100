@@ -55,9 +55,8 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
         }
 
         Long id;
-        Long parentId = Long.parseLong(dto.parentCategoryId);
         try {
-            id = categoryEJB.createSubSubCategory(parentId, dto.categoryName);
+            id = categoryEJB.createSubSubCategory(dto.parentCategoryId, dto.categoryName);
         } catch (Exception e) {
             throw WebException.wrapException(e);
         }

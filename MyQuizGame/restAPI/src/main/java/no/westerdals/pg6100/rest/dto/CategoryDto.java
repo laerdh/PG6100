@@ -7,14 +7,16 @@ import io.swagger.annotations.ApiModelProperty;
 public class CategoryDto {
 
     @ApiModelProperty("The id of the category")
-    public String id;
+    public Long id;
 
     @ApiModelProperty("The name of the category")
     public String categoryName;
 
+
     public CategoryDto() {}
 
-    public CategoryDto(String id, String categoryName) {
+
+    public CategoryDto(Long id, String categoryName) {
         this.id = id;
         this.categoryName = categoryName;
     }
