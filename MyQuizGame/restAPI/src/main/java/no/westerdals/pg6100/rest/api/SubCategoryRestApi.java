@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponse;
 import no.westerdals.pg6100.rest.dto.SubCategoryDto;
 import no.westerdals.pg6100.rest.dto.SubSubCategoryDto;
 
+import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -51,6 +52,21 @@ public interface SubCategoryRestApi {
             @ApiParam("The id of the subcategory")
             @PathParam("id")
             Long id
+    );
+
+    // PUT
+
+    @ApiOperation("Update an existing subcategory")
+    @Path("/id/{id}")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    void updateSubCategory(
+            @ApiParam("The id of the subcategory to be updated")
+            @PathParam("id")
+            Long id,
+
+            @ApiParam("The subcategory that will replace the old one. Id cannot be changed")
+            SubCategoryDto dto
     );
 
     // POST

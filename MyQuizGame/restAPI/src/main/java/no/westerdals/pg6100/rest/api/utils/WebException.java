@@ -1,4 +1,4 @@
-package no.westerdals.pg6100.rest.api.util;
+package no.westerdals.pg6100.rest.api.utils;
 
 import com.google.common.base.Throwables;
 

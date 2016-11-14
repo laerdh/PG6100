@@ -1,6 +1,6 @@
 package no.westerdals.pg6100.backend.ejb;
 
-import no.westerdals.pg6100.backend.entity.Question;
+import no.westerdals.pg6100.backend.entity.Quiz;
 import no.westerdals.pg6100.backend.entity.SubSubCategory;
 
 import javax.ejb.EJB;
@@ -10,7 +10,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
-import static no.westerdals.pg6100.backend.validation.InputValidation.formatInput;
 import static no.westerdals.pg6100.backend.validation.InputValidation.validInput;
 
 @Stateless
@@ -26,7 +25,7 @@ public class QuizEJB {
     public QuizEJB() {}
 
 
-    public Long createQuestion(Long subSubCategoryId, String question,
+    public Long createQuiz(Long subSubCategoryId, String question,
                                List<String> answers, Integer correctAnswer) {
         if (!validInput(question) || subSubCategoryId == null || answers == null) {
             return null;
@@ -38,37 +37,37 @@ public class QuizEJB {
             return null;
         }
 
-        Question q = new Question();
+        Quiz q = new Quiz();
         q.setParentSubSubCategory(subSubCategoryExist);
         q.setQuestion(question);
         q.setAnswers(answers);
         q.setCorrectAnswer(correctAnswer);
 
         em.persist(q);
-        subSubCategoryExist.getQuestions().add(q);
+        subSubCategoryExist.getQuiz().add(q);
 
         return q.getId();
     }
 
-    public Question getQuestion(Long id) {
-        Query query = em.createNamedQuery(Question.GET_QUESTION_BY_ID);
+    public Quiz getQuiz(Long id) {
+        Query query = em.createNamedQuery(Quiz.GET_QUIZ_BY_ID);
         query.setParameter(1, id);
 
-        return (Question) query.getSingleResult();
+        return (Quiz) query.getSingleResult();
     }
 
-    public List<Question> getAllQuestions() {
-        Query query = em.createNamedQuery(Question.GET_ALL_QUESTIONS);
+    public List<Quiz> getAllQuizzes() {
+        Query query = em.createNamedQuery(Quiz.GET_ALL_QUIZZES);
 
         return query.getResultList();
     }
 
-    public boolean updateQuestion(Long questionId, Long subSubCategoryId, String question, List<String> answers, Integer correctAnswer) {
+    public boolean updateQuiz(Long questionId, Long subSubCategoryId, String question, List<String> answers, Integer correctAnswer) {
         if (!validInput(question) || subSubCategoryId == null || answers == null || correctAnswer == null) {
             return false;
         }
 
-        Question q = em.find(Question.class, questionId);
+        Quiz q = em.find(Quiz.class, questionId);
 
         if (q == null) {
             return false;
@@ -89,9 +88,9 @@ public class QuizEJB {
         return true;
     }
 
-    public int deleteQuestion(Long id) {
+    public int deleteQuiz(Long id) {
         // Must delete ElementCollection manually
-        Question q = em.find(Question.class, id);
+        Quiz q = em.find(Quiz.class, id);
 
         if (q == null) {
             return 0;

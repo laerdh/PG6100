@@ -2,7 +2,7 @@ package no.westerdals.pg6100.rest.api.implementation;
 
 import no.westerdals.pg6100.backend.ejb.CategoryEJB;
 import no.westerdals.pg6100.rest.api.CategoryRestApi;
-import no.westerdals.pg6100.rest.api.util.WebException;
+import no.westerdals.pg6100.rest.api.utils.WebException;
 import no.westerdals.pg6100.rest.dto.CategoryDto;
 import no.westerdals.pg6100.rest.dto.SubCategoryDto;
 import no.westerdals.pg6100.rest.dto.SubSubCategoryDto;
@@ -55,6 +55,28 @@ public class CategoryRest implements CategoryRestApi {
         return SubCategoryConverter.transform(categoryEJB.getSubCategoriesByParentId(id));
     }
 
+    // PUT
+
+    @Override
+    public void updateCategory(Long id, CategoryDto dto) {
+        if (id == null) {
+            throw new WebApplicationException("Please provide a valid id", 400);
+        }
+        if (id.longValue() != dto.id) {
+            throw new WebApplicationException("Not allowed to change the id of the resource", 409);
+        }
+
+        if (categoryEJB.getCategory(id) == null) {
+            throw new WebApplicationException("Not allowed to create a category with PUT, and cannot find category with id: " + id, 404);
+        }
+
+        try {
+            categoryEJB.updateCategory(id, dto.categoryName);
+        } catch (Exception e) {
+            throw WebException.wrapException(e);
+        }
+    }
+
     // POST
 
     @Override
@@ -70,7 +92,9 @@ public class CategoryRest implements CategoryRestApi {
             throw WebException.wrapException(e);
         }
 
-        return Response.status(201)
+        return Response
+                .status(201)
+                .entity(id)
                 .location(URI.create(CATEGORY_PATH + "/" + id))
                 .build();
     }

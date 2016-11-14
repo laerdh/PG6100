@@ -36,7 +36,7 @@ public class SubSubCategory {
     private SubCategory parentSubCategory;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentSubSubCategory")
-    private List<Question> questions;
+    private List<Quiz> quiz;
 
 
     public SubSubCategory() {}
@@ -54,12 +54,12 @@ public class SubSubCategory {
 
     public void setParentSubCategory(SubCategory parentSubCategory) { this.parentSubCategory = parentSubCategory; }
 
-    public List<Question> getQuestions() {
-        if (questions == null) {
+    public List<Quiz> getQuiz() {
+        if (quiz == null) {
             return new ArrayList<>();
         }
-        return questions;
+        return quiz;
     }
 
-    public void setQuestions(List<Question> questions) { this.questions = questions; }
+    public void setQuiz(List<Quiz> quiz) { this.quiz = quiz; }
 }

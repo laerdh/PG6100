@@ -58,6 +58,21 @@ public interface CategoryRestApi {
     @GET
     List<SubSubCategoryDto> getSubSubCategoriesWithQuizzes();
 
+    // PUT
+
+    @ApiOperation("Update an existing category")
+    @Path("/id/{id}")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    void updateCategory(
+            @ApiParam("The id of the category")
+            @PathParam("id")
+            Long id,
+
+            @ApiParam("The category that will replace the old one. Id cannot be changed.")
+            CategoryDto dto
+    );
+
     // POST
 
     @ApiOperation("Create a category")

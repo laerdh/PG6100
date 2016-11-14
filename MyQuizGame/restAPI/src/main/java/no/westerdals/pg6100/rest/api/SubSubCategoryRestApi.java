@@ -42,6 +42,20 @@ public interface SubSubCategoryRestApi {
             Long id
     );
 
+    // PUT
+    @ApiOperation("Update an existing subsubcategory")
+    @Path("/id/{id}")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    void updateSubSubCategory(
+            @ApiParam("The id of the subsubcategory to be updated")
+            @PathParam("id")
+            Long id,
+
+            @ApiParam("The subsubcategory that will replace the old one. Id cannot be changed.")
+            SubSubCategoryDto dto
+    );
+
     // POST
 
     @ApiOperation("Create a subsubcategory")

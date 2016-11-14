@@ -8,18 +8,18 @@ import java.util.List;
 
 @Entity
 @NamedQueries({
-    @NamedQuery(name = Question.GET_ALL_QUESTIONS,
-        query = "select q from Question q"),
-    @NamedQuery(name = Question.GET_QUESTION_BY_ID,
-        query = "select q from Question q where q.id = ?1"),
-    @NamedQuery(name = Question.GET_CATEGORY_QUESTIONS,
-        query = "select q from Question q where q.parentSubSubCategory.categoryName = ?1")
+    @NamedQuery(name = Quiz.GET_ALL_QUIZZES,
+        query = "select q from Quiz q"),
+    @NamedQuery(name = Quiz.GET_QUIZ_BY_ID,
+        query = "select q from Quiz q where q.id = ?1"),
+    @NamedQuery(name = Quiz.GET_CATEGORY_QUIZZES,
+        query = "select q from Quiz q where q.parentSubSubCategory.categoryName = ?1")
 })
-public class Question {
+public class Quiz {
 
-    public static final String GET_ALL_QUESTIONS = "GET_ALL_QUESTIONS";
-    public static final String GET_QUESTION_BY_ID = "GET_QUESTION_BY_ID";
-    public static final String GET_CATEGORY_QUESTIONS = "GET_CATEGORY_QUESTIONS";
+    public static final String GET_ALL_QUIZZES = "GET_ALL_QUIZZES";
+    public static final String GET_QUIZ_BY_ID = "GET_QUIZ_BY_ID";
+    public static final String GET_CATEGORY_QUIZZES = "GET_CATEGORY_QUIZZES";
 
     @Id @GeneratedValue
     private Long id;
@@ -38,7 +38,7 @@ public class Question {
     private SubSubCategory parentSubSubCategory;
 
 
-    public Question() {}
+    public Quiz() {}
 
 
     public Long getId() { return id; }

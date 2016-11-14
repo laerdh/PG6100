@@ -1,6 +1,6 @@
 package no.westerdals.pg6100.rest.dto.converter;
 
-import no.westerdals.pg6100.backend.entity.Question;
+import no.westerdals.pg6100.backend.entity.Quiz;
 import no.westerdals.pg6100.rest.dto.QuizDto;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public class QuizConverter {
 
     private QuizConverter() {}
 
-    public static QuizDto transform(Question entity) {
+    public static QuizDto transform(Quiz entity) {
         Objects.requireNonNull(entity);
 
         QuizDto dto = new QuizDto();
@@ -24,7 +24,7 @@ public class QuizConverter {
         return dto;
     }
 
-    public static List<QuizDto> transform(List<Question> entities) {
+    public static List<QuizDto> transform(List<Quiz> entities) {
         Objects.requireNonNull(entities);
 
         return entities.stream()

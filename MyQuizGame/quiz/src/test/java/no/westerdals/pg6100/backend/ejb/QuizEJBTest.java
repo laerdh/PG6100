@@ -1,7 +1,7 @@
 package no.westerdals.pg6100.backend.ejb;
 
 import no.westerdals.pg6100.backend.entity.Category;
-import no.westerdals.pg6100.backend.entity.Question;
+import no.westerdals.pg6100.backend.entity.Quiz;
 import no.westerdals.pg6100.backend.utils.DeleterEJB;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -54,7 +54,7 @@ public class QuizEJBTest {
         List<String> answers = Arrays.asList("David Beckham", "Jimmy Floyd Hasselbaink", "Eric Cantona", "Alan Shearer");
         int correctAnswer = 3;
 
-        Long id = quizEJB.createQuestion(categoryId, "Who is PL all-time topscorer?", answers, correctAnswer);
+        Long id = quizEJB.createQuiz(categoryId, "Who is PL all-time topscorer?", answers, correctAnswer);
         assertNotNull(id);
     }
 
@@ -62,7 +62,7 @@ public class QuizEJBTest {
     public void testAddQuizQuestionWithEmptyStringShouldFail() throws Exception {
         Long categoryId = createCategories("Sports", "Football", "Premier League");
 
-        Long id = quizEJB.createQuestion(categoryId, "", new ArrayList<>(), null);
+        Long id = quizEJB.createQuiz(categoryId, "", new ArrayList<>(), null);
         assertNull(id);
     }
 
@@ -70,7 +70,7 @@ public class QuizEJBTest {
     public void testAddQuizQuestionWithNullShouldFail() throws Exception {
         Long categoryId = createCategories("Sports", "Football", "Premier League");
 
-        Long id = quizEJB.createQuestion(categoryId, null, null, null);
+        Long id = quizEJB.createQuiz(categoryId, null, null, null);
         assertNull(id);
     }
 
@@ -81,10 +81,10 @@ public class QuizEJBTest {
         List<String> answers = Arrays.asList("David Beckham", "Jimmy Floyd Hasselbaink", "Eric Cantona", "Alan Shearer");
         int correctAnswer = 3;
 
-        Long id = quizEJB.createQuestion(categoryId, "Who is PL all-time topscorer?", answers, correctAnswer);
+        Long id = quizEJB.createQuiz(categoryId, "Who is PL all-time topscorer?", answers, correctAnswer);
         assertNotNull(id);
 
-        Question q = quizEJB.getQuestion(id);
+        Quiz q = quizEJB.getQuiz(id);
 
 
         assertEquals(answers.get(correctAnswer), q.getAnswers().get(q.getCorrectAnswer()));
@@ -100,25 +100,25 @@ public class QuizEJBTest {
         int correctAnswer = 0;
 
         String question = "Who is La Ligas topscorer?";
-        Long id = quizEJB.createQuestion(subSubCategoryId, question, answers, correctAnswer);
+        Long id = quizEJB.createQuiz(subSubCategoryId, question, answers, correctAnswer);
         assertNotNull(id);
 
-        Question q = quizEJB.getQuestion(id);
+        Quiz q = quizEJB.getQuiz(id);
         assertEquals(question, q.getQuestion());
 
         question = "Who is Premier Leagues topscorer?";
-        assertTrue(quizEJB.updateQuestion(id, subSubCategoryId, question, answers, 0));
+        assertTrue(quizEJB.updateQuiz(id, subSubCategoryId, question, answers, 0));
 
-        assertEquals(question, quizEJB.getQuestion(id).getQuestion());
+        assertEquals(question, quizEJB.getQuiz(id).getQuestion());
     }
 
     @Test
     public void testDeleteQuizQuestion() throws Exception {
         Long id = createQuizQuestion();
 
-        int expected = quizEJB.getAllQuestions().size();
-        assertEquals(1, quizEJB.deleteQuestion(id));
-        int actual = quizEJB.getAllQuestions().size();
+        int expected = quizEJB.getAllQuizzes().size();
+        assertEquals(1, quizEJB.deleteQuiz(id));
+        int actual = quizEJB.getAllQuizzes().size();
 
         assertEquals(expected - 1, actual);
     }
@@ -135,7 +135,7 @@ public class QuizEJBTest {
         List<String> answers = Arrays.asList("David Beckham", "Jimmy Floyd Hasselbaink", "Eric Cantona", "Alan Shearer");
         int correctAnswer = 3;
 
-        Long id = quizEJB.createQuestion(categoryId, "Who is PLs all-time topscorer?", answers, correctAnswer);
+        Long id = quizEJB.createQuiz(categoryId, "Who is PLs all-time topscorer?", answers, correctAnswer);
 
         return id;
     }

@@ -270,7 +270,7 @@ public class CategoryEJBTest {
         Long subCategoryId = categoryEJB.createSubCategory(categoryId, "Football");
         Long subSubCategoryId = categoryEJB.createSubSubCategory(subCategoryId, "Premier League");
 
-        quizEJB.createQuestion(subSubCategoryId, "Who is PLs all-time topscorer?", Arrays.asList("Alan Shearer", "Andy Cole", "Eric Cantona", "Peter Osgood"), 0);
+        quizEJB.createQuiz(subSubCategoryId, "Who is PLs all-time topscorer?", Arrays.asList("Alan Shearer", "Andy Cole", "Eric Cantona", "Peter Osgood"), 0);
 
         List<Category> actual = categoryEJB.getAllCategoriesWithQuizzes();
 
@@ -288,7 +288,7 @@ public class CategoryEJBTest {
         Long subSubCategoryId = categoryEJB.createSubSubCategory(subCategoryId, "Premier League");
         categoryEJB.createSubSubCategory(subCategoryId, "World cup");
 
-        quizEJB.createQuestion(subSubCategoryId, "Who is PLs all-time topscorer?", Arrays.asList("Alan Shearer", "Andy Cole", "Eric Cantona", "Peter Osgood"), 0);
+        quizEJB.createQuiz(subSubCategoryId, "Who is PLs all-time topscorer?", Arrays.asList("Alan Shearer", "Andy Cole", "Eric Cantona", "Peter Osgood"), 0);
 
         List<SubSubCategory> actual = categoryEJB.getAllSubSubCategoryWithQuizzes();
 

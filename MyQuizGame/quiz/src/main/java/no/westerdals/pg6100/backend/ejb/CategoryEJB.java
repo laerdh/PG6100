@@ -1,7 +1,7 @@
 package no.westerdals.pg6100.backend.ejb;
 
 import no.westerdals.pg6100.backend.entity.Category;
-import no.westerdals.pg6100.backend.entity.Question;
+import no.westerdals.pg6100.backend.entity.Quiz;
 import no.westerdals.pg6100.backend.entity.SubCategory;
 import no.westerdals.pg6100.backend.entity.SubSubCategory;
 
@@ -279,9 +279,8 @@ public class CategoryEJB {
     public List<Category> getAllCategoriesWithQuizzes() {
         Set<Category> categories = new HashSet<>();
 
-        for (Question q : quizEJB.getAllQuestions()) {
-            categories.add(q.getParentSubSubCategory().getParentSubCategory().getParentCategory());
-        }
+        quizEJB.getAllQuizzes().forEach(q ->
+                categories.add(q.getParentSubSubCategory().getParentSubCategory().getParentCategory()));
 
         return new ArrayList<>(categories);
     }
@@ -289,9 +288,8 @@ public class CategoryEJB {
     public List<SubSubCategory> getAllSubSubCategoryWithQuizzes() {
         Set<SubSubCategory> subSubCategories = new HashSet<>();
 
-        for (Question q : quizEJB.getAllQuestions()) {
-            subSubCategories.add(q.getParentSubSubCategory());
-        }
+        quizEJB.getAllQuizzes().forEach(q ->
+                subSubCategories.add(q.getParentSubSubCategory()));
 
         return new ArrayList<>(subSubCategories);
     }
