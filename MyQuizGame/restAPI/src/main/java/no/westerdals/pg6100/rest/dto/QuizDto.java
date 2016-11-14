@@ -3,6 +3,8 @@ package no.westerdals.pg6100.rest.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
+
 @ApiModel("A quiz")
 public class QuizDto {
 
@@ -16,7 +18,7 @@ public class QuizDto {
     public Integer correctAnswer;
 
     @ApiModelProperty("List of answers")
-    public String answers;
+    public List<String> answers;
 
     @ApiModelProperty("The parent category id")
     public Long parentCategoryId;
@@ -25,7 +27,7 @@ public class QuizDto {
     public QuizDto() {}
 
 
-    public QuizDto(Long id, String question, Integer correctAnswer, String answers,
+    public QuizDto(Long id, String question, Integer correctAnswer, List<String> answers,
                    Long parentCategoryId) {
         this.id = id;
         this.question = question;

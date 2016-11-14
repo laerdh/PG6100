@@ -8,6 +8,7 @@ import no.westerdals.pg6100.rest.dto.QuizDto;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Api(value = "/quizzes", description = "API for Quizzes")
@@ -38,7 +39,7 @@ public interface QuizRestApi {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @ApiResponse(code = 201, message = "The id of the newly created quiz")
-    Long createQuiz(
+    Response createQuiz(
         @ApiParam("Quiz id, question, answers and the id of the correct answer. Should not specify" +
                 "id at the time of creation")
         QuizDto dto

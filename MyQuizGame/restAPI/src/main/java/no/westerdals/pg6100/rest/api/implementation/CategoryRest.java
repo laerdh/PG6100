@@ -13,11 +13,15 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.net.URI;
 import java.util.List;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class CategoryRest implements CategoryRestApi {
+
+    private static final String CATEGORY_PATH = "/categories";
 
     @EJB
     private CategoryEJB categoryEJB;
@@ -42,7 +46,7 @@ public class CategoryRest implements CategoryRestApi {
     // POST
 
     @Override
-    public Long createCategory(CategoryDto dto) {
+    public Response createCategory(CategoryDto dto) {
         if (dto.id != null) {
             throw new WebApplicationException("Cannot specify id for a newly created category", 400);
         }
@@ -54,7 +58,9 @@ public class CategoryRest implements CategoryRestApi {
             throw WebException.wrapException(e);
         }
 
-        return id;
+        return Response.status(201)
+                .location(URI.create(CATEGORY_PATH + "/" + id))
+                .build();
     }
 
     // DELETE

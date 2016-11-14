@@ -10,6 +10,7 @@ import no.westerdals.pg6100.rest.dto.SubSubCategoryDto;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 
@@ -49,8 +50,8 @@ public interface CategoryRestApi {
     @ApiOperation("Create a category")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @ApiResponse(code = 200, message = "The id of the newly created category")
-    Long createCategory(
+    @ApiResponse(code = 201, message = "The id of the newly created category")
+    Response createCategory(
             @ApiParam("The name of the category and id. Should not specify id at the time of creation")
             CategoryDto dto);
 

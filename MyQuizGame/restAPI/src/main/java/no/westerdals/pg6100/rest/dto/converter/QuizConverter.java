@@ -18,7 +18,7 @@ public class QuizConverter {
         dto.id = entity.getId();
         dto.question = entity.getQuestion();
         dto.correctAnswer = entity.getCorrectAnswer();
-        dto.answers =  entity.getAnswers().toString();
+        dto.answers =  entity.getAnswers();
         dto.parentCategoryId = entity.getParentSubSubCategory().getId();
 
         return dto;

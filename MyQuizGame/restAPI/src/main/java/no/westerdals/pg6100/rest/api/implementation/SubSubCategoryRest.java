@@ -12,11 +12,15 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import java.net.URI;
 import java.util.List;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class SubSubCategoryRest implements SubSubCategoryRestApi {
+
+    private static final String SUBSUBCATEGORY_PATH = "/subsubcategories";
 
     @EJB
     private CategoryEJB categoryEJB;
@@ -41,7 +45,7 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
     // POST
 
     @Override
-    public Long createSubSubCategory(@ApiParam("The id of the parent subsubcategory and category, name and id. " + "Should not specify id at time of creation") SubSubCategoryDto dto) {
+    public Response createSubSubCategory(@ApiParam("The id of the parent subsubcategory and category, name and id. " + "Should not specify id at time of creation") SubSubCategoryDto dto) {
         if (dto.id != null) {
             throw new WebApplicationException("Cannot specify id for newly created subsubcategory", 400);
         }
@@ -61,7 +65,9 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
             throw WebException.wrapException(e);
         }
 
-        return id;
+        return Response.status(201)
+                .location(URI.create(SUBSUBCATEGORY_PATH + "/" + id))
+                .build();
     }
 
     // DELETE

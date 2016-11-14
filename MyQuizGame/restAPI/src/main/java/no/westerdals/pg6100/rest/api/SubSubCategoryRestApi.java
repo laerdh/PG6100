@@ -8,6 +8,7 @@ import no.westerdals.pg6100.rest.dto.SubSubCategoryDto;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Api(value = "/subsubcategories", description = "API for Quiz SubSubCategories")
@@ -47,7 +48,7 @@ public interface SubSubCategoryRestApi {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @ApiResponse(code = 201, message = "The id of the newly created subsubcategory")
-    Long createSubSubCategory(
+    Response createSubSubCategory(
             @ApiParam("The id of the parent subsubcategory and category, name and id. " +
                     "Should not specify id at time of creation")
             SubSubCategoryDto dto

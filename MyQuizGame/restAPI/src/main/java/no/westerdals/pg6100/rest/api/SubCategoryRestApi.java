@@ -9,6 +9,7 @@ import no.westerdals.pg6100.rest.dto.SubSubCategoryDto;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Api(value = "/subcategories", description = "API for Quiz Subcategories")
@@ -58,7 +59,7 @@ public interface SubCategoryRestApi {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @ApiResponse(code = 201, message = "The id of the newly created subcategory")
-    Long createSubCategory(
+    Response createSubCategory(
             @ApiParam("Category id, name and id. Should not specify id at time of creation")
             SubCategoryDto dto
     );
