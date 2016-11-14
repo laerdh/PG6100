@@ -1,15 +1,17 @@
 package no.westerdals.pg6100.backend.ejb;
 
 import no.westerdals.pg6100.backend.entity.Category;
+import no.westerdals.pg6100.backend.entity.Question;
 import no.westerdals.pg6100.backend.entity.SubCategory;
 import no.westerdals.pg6100.backend.entity.SubSubCategory;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import java.util.List;
+import java.util.*;
 
 import static no.westerdals.pg6100.backend.validation.InputValidation.formatInput;
 import static no.westerdals.pg6100.backend.validation.InputValidation.validInput;
@@ -19,6 +21,9 @@ public class CategoryEJB {
 
     @PersistenceContext
     private EntityManager em;
+
+    @EJB
+    private QuizEJB quizEJB;
 
 
     public CategoryEJB() {}
@@ -40,6 +45,24 @@ public class CategoryEJB {
         em.persist(c);
 
         return c.getId();
+    }
+
+    public boolean updateCategory(Long id, String category) {
+        if (id == null || !validInput(category)) {
+            return false;
+        }
+
+        Category c = em.find(Category.class, id);
+
+        if (c == null) {
+            return false;
+        }
+
+        // Update attribute(s)
+        c.setCategoryName(category);
+
+        em.merge(c);
+        return true;
     }
 
     public Long createSubCategory(Long parentId, String subCategory) {
@@ -64,6 +87,31 @@ public class CategoryEJB {
         return c.getId();
     }
 
+    public boolean updateSubCategory(Long id, Long parentId, String subCategory) {
+        if (id == null || !validInput(subCategory)) {
+            return false;
+        }
+
+        SubCategory sc = em.find(SubCategory.class, id);
+
+        if (sc == null) {
+            return false;
+        }
+
+        Category parentCategory = em.find(Category.class, parentId);
+
+        if (parentCategory == null) {
+            return false;
+        }
+
+        // Update attributes
+        sc.setParentCategory(parentCategory);
+        sc.setCategoryName(formatInput(subCategory));
+
+        em.merge(sc);
+        return true;
+    }
+
     public Long createSubSubCategory(Long parentId, String subSubCategory) {
         if (!validInput(subSubCategory) || parentId == null) {
             return null;
@@ -85,6 +133,25 @@ public class CategoryEJB {
         subCategoryExist.getSubSubCategories().add(c);
 
         return c.getId();
+    }
+
+    public boolean updateSubSubCategory(Long id, Long parentId, String subSubCategory) {
+        if (id == null || parentId == null || !validInput(subSubCategory)) {
+            return false;
+        }
+
+        SubSubCategory ssc = em.find(SubSubCategory.class, id);
+        SubCategory sc = em.find(SubCategory.class, parentId);
+
+        if (sc == null || ssc == null) {
+            return false;
+        }
+
+        ssc.setParentSubCategory(sc);
+        ssc.setCategoryName(subSubCategory);
+
+        em.merge(ssc);
+        return true;
     }
 
     public List<Category> getCategories() {
@@ -207,6 +274,26 @@ public class CategoryEJB {
         Query query = em.createNamedQuery(SubSubCategory.GET_ALL_SUBSUBCATEGORIES);
 
         return query.getResultList();
+    }
+
+    public List<Category> getAllCategoriesWithQuizzes() {
+        Set<Category> categories = new HashSet<>();
+
+        for (Question q : quizEJB.getAllQuestions()) {
+            categories.add(q.getParentSubSubCategory().getParentSubCategory().getParentCategory());
+        }
+
+        return new ArrayList<>(categories);
+    }
+
+    public List<SubSubCategory> getAllSubSubCategoryWithQuizzes() {
+        Set<SubSubCategory> subSubCategories = new HashSet<>();
+
+        for (Question q : quizEJB.getAllQuestions()) {
+            subSubCategories.add(q.getParentSubSubCategory());
+        }
+
+        return new ArrayList<>(subSubCategories);
     }
 
     public int deleteSubSubCategory(Long id) {

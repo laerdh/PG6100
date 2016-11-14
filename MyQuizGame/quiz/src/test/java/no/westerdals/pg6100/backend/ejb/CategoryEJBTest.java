@@ -1,6 +1,7 @@
 package no.westerdals.pg6100.backend.ejb;
 
 import no.westerdals.pg6100.backend.entity.Category;
+import no.westerdals.pg6100.backend.entity.SubSubCategory;
 import no.westerdals.pg6100.backend.utils.DeleterEJB;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -12,6 +13,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -59,6 +63,51 @@ public class CategoryEJBTest {
     @Test
     public void testAddCategoryWithEmptyStringShouldFail() throws Exception {
         assertNull(categoryEJB.createCategory(""));
+    }
+
+    @Test
+    public void testUpdateCategory() throws Exception {
+        String categoryName = "sports";
+        Long id = categoryEJB.createCategory(categoryName);
+
+        assertEquals(categoryName, categoryEJB.getCategory(id).getCategoryName());
+        categoryName = "music";
+        assertTrue(categoryEJB.updateCategory(id, categoryName));
+
+        assertEquals(categoryName, categoryEJB.getCategory(id).getCategoryName());
+    }
+
+    @Test
+    public void testUpdateSubCategory() throws Exception {
+        String categoryName = "sports";
+        String subCategoryName = "football";
+        Long id = categoryEJB.createCategory(categoryName);
+        Long subCategoryId = categoryEJB.createSubCategory(id, subCategoryName);
+
+        assertEquals(subCategoryName, categoryEJB.getSubCategoryById(subCategoryId).getCategoryName());
+        subCategoryName = "hockey";
+
+        assertTrue(categoryEJB.updateSubCategory(subCategoryId, id, subCategoryName));
+
+        assertEquals(subCategoryName, categoryEJB.getSubCategoryById(subCategoryId).getCategoryName());
+    }
+
+    @Test
+    public void testUpdateSubSubCategory() throws Exception {
+        String categoryName = "sports";
+        String subCategoryName = "football";
+        String subSubCategoryName = "premier league";
+
+        Long id = categoryEJB.createCategory(categoryName);
+        Long subCategoryId = categoryEJB.createSubCategory(id, subCategoryName);
+        Long subSubCategoryId = categoryEJB.createSubSubCategory(subCategoryId, subSubCategoryName);
+
+        assertEquals(subSubCategoryName, categoryEJB.getSubSubCategoryById(subSubCategoryId).getCategoryName());
+        subSubCategoryName = "world cup";
+
+        assertTrue(categoryEJB.updateSubSubCategory(subSubCategoryId, subCategoryId, subSubCategoryName));
+
+        assertEquals(subSubCategoryName, categoryEJB.getSubSubCategoryById(subSubCategoryId).getCategoryName());
     }
 
     @Test
@@ -209,6 +258,42 @@ public class CategoryEJBTest {
         int actual = categoryEJB.getSubSubCategoriesByParentName("Football").size();
 
         assertEquals(expected + 2, actual);
+    }
+
+    @Test
+    public void testGetAllCategoriesWithQuiz() throws Exception {
+        String categoryName = "Sports";
+        Long categoryId = categoryEJB.createCategory(categoryName);
+
+        categoryEJB.createCategory("Music");
+        categoryEJB.createCategory("Science");
+        Long subCategoryId = categoryEJB.createSubCategory(categoryId, "Football");
+        Long subSubCategoryId = categoryEJB.createSubSubCategory(subCategoryId, "Premier League");
+
+        quizEJB.createQuestion(subSubCategoryId, "Who is PLs all-time topscorer?", Arrays.asList("Alan Shearer", "Andy Cole", "Eric Cantona", "Peter Osgood"), 0);
+
+        List<Category> actual = categoryEJB.getAllCategoriesWithQuizzes();
+
+        assertEquals(1, actual.size());
+        assertEquals(categoryName.toLowerCase(), actual.get(0).getCategoryName());
+    }
+
+    @Test
+    public void testGetAllSubSubCategoriesWithQuiz() throws Exception {
+        String subSubCategoryName = "Premier League";
+
+        Long categoryId = categoryEJB.createCategory("Sports");
+
+        Long subCategoryId = categoryEJB.createSubCategory(categoryId, "Football");
+        Long subSubCategoryId = categoryEJB.createSubSubCategory(subCategoryId, "Premier League");
+        categoryEJB.createSubSubCategory(subCategoryId, "World cup");
+
+        quizEJB.createQuestion(subSubCategoryId, "Who is PLs all-time topscorer?", Arrays.asList("Alan Shearer", "Andy Cole", "Eric Cantona", "Peter Osgood"), 0);
+
+        List<SubSubCategory> actual = categoryEJB.getAllSubSubCategoryWithQuizzes();
+
+        assertEquals(1, actual.size());
+        assertEquals(subSubCategoryName.toLowerCase(), actual.get(0).getCategoryName());
     }
 
     @Test

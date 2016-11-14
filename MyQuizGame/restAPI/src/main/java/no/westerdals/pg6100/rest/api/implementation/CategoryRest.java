@@ -5,8 +5,10 @@ import no.westerdals.pg6100.rest.api.CategoryRestApi;
 import no.westerdals.pg6100.rest.api.util.WebException;
 import no.westerdals.pg6100.rest.dto.CategoryDto;
 import no.westerdals.pg6100.rest.dto.SubCategoryDto;
+import no.westerdals.pg6100.rest.dto.SubSubCategoryDto;
 import no.westerdals.pg6100.rest.dto.converter.CategoryConverter;
 import no.westerdals.pg6100.rest.dto.converter.SubCategoryConverter;
+import no.westerdals.pg6100.rest.dto.converter.SubSubCategoryConverter;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -36,6 +38,16 @@ public class CategoryRest implements CategoryRestApi {
     @Override
     public CategoryDto getCategory(Long id) {
         return CategoryConverter.transform(categoryEJB.getCategory(id));
+    }
+
+    @Override
+    public List<CategoryDto> getCategoriesWithQuizzes() {
+        return CategoryConverter.transform(categoryEJB.getAllCategoriesWithQuizzes());
+    }
+
+    @Override
+    public List<SubSubCategoryDto> getSubSubCategoriesWithQuizzes() {
+        return SubSubCategoryConverter.transform(categoryEJB.getAllSubSubCategoryWithQuizzes());
     }
 
     @Override

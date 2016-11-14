@@ -50,9 +50,9 @@ public class QuizEJB {
         return q.getId();
     }
 
-    public Question getQuestion(Long parentId) {
+    public Question getQuestion(Long id) {
         Query query = em.createNamedQuery(Question.GET_QUESTION_BY_ID);
-        query.setParameter(1, parentId);
+        query.setParameter(1, id);
 
         return (Question) query.getSingleResult();
     }
@@ -61,6 +61,32 @@ public class QuizEJB {
         Query query = em.createNamedQuery(Question.GET_ALL_QUESTIONS);
 
         return query.getResultList();
+    }
+
+    public boolean updateQuestion(Long questionId, Long subSubCategoryId, String question, List<String> answers, Integer correctAnswer) {
+        if (!validInput(question) || subSubCategoryId == null || answers == null || correctAnswer == null) {
+            return false;
+        }
+
+        Question q = em.find(Question.class, questionId);
+
+        if (q == null) {
+            return false;
+        }
+
+        SubSubCategory subSubCategoryExist = em.find(SubSubCategory.class, subSubCategoryId);
+        if (subSubCategoryExist == null) {
+            return false;
+        }
+
+        q.setParentSubSubCategory(subSubCategoryExist);
+        q.setQuestion(question);
+        q.getAnswers().clear();
+        q.setAnswers(answers);
+        q.setCorrectAnswer(correctAnswer);
+
+        em.merge(q);
+        return true;
     }
 
     public int deleteQuestion(Long id) {

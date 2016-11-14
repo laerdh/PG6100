@@ -91,6 +91,28 @@ public class QuizEJBTest {
     }
 
     @Test
+    public void testUpdateQuizQuestion() throws Exception {
+        Long categoryId = categoryEJB.createCategory("Sports");
+        Long subCategoryId = categoryEJB.createSubCategory(categoryId, "Football");
+        Long subSubCategoryId = categoryEJB.createSubSubCategory(subCategoryId, "Premier League");
+
+        List<String> answers = new ArrayList<>(Arrays.asList("Diego Costa", "Sergio Aguero", "Zlatan Ibrahimovic", "Olivier Giroud"));
+        int correctAnswer = 0;
+
+        String question = "Who is La Ligas topscorer?";
+        Long id = quizEJB.createQuestion(subSubCategoryId, question, answers, correctAnswer);
+        assertNotNull(id);
+
+        Question q = quizEJB.getQuestion(id);
+        assertEquals(question, q.getQuestion());
+
+        question = "Who is Premier Leagues topscorer?";
+        assertTrue(quizEJB.updateQuestion(id, subSubCategoryId, question, answers, 0));
+
+        assertEquals(question, quizEJB.getQuestion(id).getQuestion());
+    }
+
+    @Test
     public void testDeleteQuizQuestion() throws Exception {
         Long id = createQuizQuestion();
 

@@ -45,6 +45,19 @@ public interface CategoryRestApi {
             Long id
     );
 
+
+    @ApiOperation("Retrieve a list of all categories that have at least one subcategory with at least one subsubcategory" +
+            "with at least one quiz")
+    @Path("/withQuizzes")
+    @GET
+    List<CategoryDto> getCategoriesWithQuizzes();
+
+
+    @ApiOperation("Retrieve a list of all subsubcategories with at least one quiz")
+    @Path("/withQuizzes/subsubcategories")
+    @GET
+    List<SubSubCategoryDto> getSubSubCategoriesWithQuizzes();
+
     // POST
 
     @ApiOperation("Create a category")
