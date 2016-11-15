@@ -59,7 +59,7 @@ public class CategoryEJB {
         }
 
         // Update attribute(s)
-        c.setCategoryName(category);
+        c.setCategoryName(formatInput(category));
 
         em.merge(c);
         return true;
