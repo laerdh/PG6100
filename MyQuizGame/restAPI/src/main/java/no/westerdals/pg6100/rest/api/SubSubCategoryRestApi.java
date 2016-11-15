@@ -47,7 +47,7 @@ public interface SubSubCategoryRestApi {
     @Path("/id/{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    void updateSubSubCategory(
+    Response updateSubSubCategory(
             @ApiParam("The id of the subsubcategory to be updated")
             @PathParam("id")
             Long id,

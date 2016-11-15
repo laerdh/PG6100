@@ -95,14 +95,23 @@ public class RestTestBase {
         RestAssured.basePath = BASE_PATH + CATEGORY_PATH;
         CategoryDto dto = new CategoryDto(null, name);
 
-        String id = given().contentType(ContentType.JSON)
+        return given().contentType(ContentType.JSON)
                 .body(dto)
                 .post()
                 .then()
                 .statusCode(201)
                 .extract().asString();
+    }
 
+    protected String createSubCategory(String name, Long parentId) {
         RestAssured.basePath = BASE_PATH + SUBCATEGORY_PATH;
-        return id;
+        SubCategoryDto dto = new SubCategoryDto(null, name, parentId);
+
+        return given().contentType(ContentType.JSON)
+                .body(dto)
+                .post()
+                .then()
+                .statusCode(201)
+                .extract().asString();
     }
 }

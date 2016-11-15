@@ -52,7 +52,7 @@ public class SubCategoryRest implements SubCategoryRestApi {
     // PUT
 
     @Override
-    public void updateSubCategory(Long id, SubCategoryDto dto) {
+    public Response updateSubCategory(Long id, SubCategoryDto dto) {
         if (id == null) {
             throw new WebApplicationException("Please provide a valid id", 400);
         }
@@ -70,6 +70,9 @@ public class SubCategoryRest implements SubCategoryRestApi {
         } catch (Exception e) {
             throw WebException.wrapException(e);
         }
+
+        return Response.status(200)
+                .build();
     }
 
     // POST

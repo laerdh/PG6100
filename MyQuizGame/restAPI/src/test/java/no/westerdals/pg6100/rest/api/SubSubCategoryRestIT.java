@@ -1,22 +1,21 @@
 package no.westerdals.pg6100.rest.api;
 
 import static io.restassured.RestAssured.*;
+import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-
-import no.westerdals.pg6100.rest.dto.SubCategoryDto;
+import no.westerdals.pg6100.rest.dto.SubSubCategoryDto;
 import org.junit.Before;
 import org.junit.Test;
 
-
-public class SubCategoryRestIT extends RestTestBase {
+public class SubSubCategoryRestIT extends RestTestBase {
 
     @Before
     public void setBasePath() {
-        RestAssured.basePath = BASE_PATH + SUBCATEGORY_PATH;
+        RestAssured.basePath = BASE_PATH + SUBSUBCATEGORY_PATH;
     }
 
     @Test
@@ -26,22 +25,15 @@ public class SubCategoryRestIT extends RestTestBase {
                 .body("size()", is(0));
     }
 
-    /*
-        https://github.com/rest-assured/rest-assured/issues/741
-
-        There is a bug in RestAssured when trying to compare
-        Long values within a JSON body.
-        A workaround is to extract the body as a Dto and then use
-        regular Assert to check for equality.
-     */
     @Test
-    public void testCreateAndGetSubCategory() {
-        String categoryId = createCategory("sports");
+    public void testCreateAndGetSubSubCategory() {
+        Long categoryId = Long.parseLong(createCategory("sports"));
+        Long subCategoryId = Long.parseLong(createSubCategory("football",
+                categoryId));
         setBasePath();
+        String categoryName = "premier league";
 
-        String subCategoryName = "football";
-        SubCategoryDto dto = new SubCategoryDto(null, subCategoryName,
-                Long.parseLong(categoryId));
+        SubSubCategoryDto dto = new SubSubCategoryDto(null, categoryName, subCategoryId);
 
         get().then().statusCode(200).body("size()", is(0));
 
@@ -54,25 +46,26 @@ public class SubCategoryRestIT extends RestTestBase {
 
         get().then().statusCode(200).body("size()", is(1));
 
-        SubCategoryDto response = given().pathParam("id", id)
+        SubSubCategoryDto response = given()
+                .pathParam("id", id)
                 .get("/id/{id}")
                 .then()
                 .statusCode(200)
-                .extract().as(SubCategoryDto.class);
+                .extract().as(SubSubCategoryDto.class);
 
         assertEquals(response.id.toString(), id);
-        assertEquals(response.categoryName, subCategoryName);
-        assertEquals(response.parentCategoryId.toString(), categoryId);
+        assertEquals(response.categoryName, categoryName);
+        assertEquals(response.parentCategoryId, subCategoryId);
     }
 
     @Test
-    public void testCreateAndDeleteSubCategory() {
-        String categoryId = createCategory("music");
+    public void testCreateAndDeleteSubSubCategory() {
+        Long categoryId = Long.parseLong(createCategory("sports"));
+        Long subCategoryId = Long.parseLong(createSubCategory("football", categoryId));
         setBasePath();
+        String categoryName = "world cup";
 
-        String subCategoryName = "rock";
-        SubCategoryDto dto = new SubCategoryDto(null, subCategoryName,
-                Long.parseLong(categoryId));
+        SubSubCategoryDto dto = new SubSubCategoryDto(null, categoryName, subCategoryId);
 
         get().then().statusCode(200).body("size()", is(0));
 
@@ -94,15 +87,13 @@ public class SubCategoryRestIT extends RestTestBase {
     }
 
     @Test
-    public void testCreateAndUpdateSubCategory() {
-        String categoryId = createCategory("music");
+    public void testCreateAndUpdateSubSubCategory() {
+        Long categoryId = Long.parseLong(createCategory("sports"));
+        Long subCategoryId = Long.parseLong(createSubCategory("football", categoryId));
         setBasePath();
+        String categoryName = "serie a";
 
-        String subCategoryName = "rock";
-        SubCategoryDto dto = new SubCategoryDto(null, subCategoryName,
-                Long.parseLong(categoryId));
-
-        get().then().statusCode(200).body("size()", is(0));
+        SubSubCategoryDto dto = new SubSubCategoryDto(null, categoryName, subCategoryId);
 
         String id = given().contentType(ContentType.JSON)
                 .body(dto)
@@ -111,12 +102,9 @@ public class SubCategoryRestIT extends RestTestBase {
                 .statusCode(201)
                 .extract().asString();
 
-        get().then().statusCode(200).body("size()", is(1));
-
-        // Update subcategoryname
-        subCategoryName = "classical";
-        dto = new SubCategoryDto(Long.parseLong(id), subCategoryName,
-                Long.parseLong(categoryId));
+        // Update subsubcategory name
+        categoryName = "la liga";
+        dto = new SubSubCategoryDto(Long.parseLong(id), categoryName, subCategoryId);
 
         given().contentType(ContentType.JSON)
                 .pathParam("id", id)
@@ -125,11 +113,15 @@ public class SubCategoryRestIT extends RestTestBase {
                 .then()
                 .statusCode(200);
 
-        given().pathParam("id", id)
+        SubSubCategoryDto response = given()
+                .pathParam("id", id)
                 .get("/id/{id}")
                 .then()
                 .statusCode(200)
-                .body("categoryName", is(subCategoryName));
+                .extract().as(SubSubCategoryDto.class);
 
+        assertEquals(response.id.toString(), id);
+        assertEquals(response.categoryName, categoryName);
+        assertEquals(response.parentCategoryId, subCategoryId);
     }
 }

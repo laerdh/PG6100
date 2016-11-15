@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
 
 public class CategoryRestIT extends RestTestBase {
 
@@ -27,7 +28,7 @@ public class CategoryRestIT extends RestTestBase {
 
     @Test
     public void testCreateAndGetCategory() {
-        String categoryName = "Sports";
+        String categoryName = "sports";
         CategoryDto dto = new CategoryDto(null, categoryName);
 
         get().then().statusCode(200).body("size()", is(0));
@@ -41,16 +42,19 @@ public class CategoryRestIT extends RestTestBase {
 
         get().then().statusCode(200).body("size()", is(1));
 
-        given().pathParam("id", id)
+        CategoryDto response = given().pathParam("id", id)
                 .get("/id/{id}")
                 .then()
                 .statusCode(200)
-                .body("categoryName", is(categoryName.toLowerCase()));
+                .extract().as(CategoryDto.class);
+
+        assertEquals(response.id.toString(), id);
+        assertEquals(response.categoryName, categoryName);
     }
 
     @Test
     public void testCreateAndDeleteCategory() {
-        String categoryName = "Sports";
+        String categoryName = "sports";
         CategoryDto dto = new CategoryDto(null, categoryName);
 
         get().then().statusCode(200).body("size()", is(0));
@@ -68,14 +72,14 @@ public class CategoryRestIT extends RestTestBase {
                 .delete("/id/{id}")
                 .then()
                 .statusCode(204);
+
+        get().then().statusCode(200).body("size()", is(0));
     }
 
     @Test
-    public void testUpdateCategory() {
-        String categoryName = "Sports";
+    public void testCreateAndUpdateCategory() {
+        String categoryName = "sports";
         CategoryDto dto = new CategoryDto(null, categoryName);
-
-        get().then().statusCode(200).body("size()", is(0));
 
         String id = given().contentType(ContentType.JSON)
                 .body(dto)
@@ -84,18 +88,15 @@ public class CategoryRestIT extends RestTestBase {
                 .statusCode(201)
                 .extract().asString();
 
-        get().then().statusCode(200).body("size()", is(1));
-
         given().pathParam("id", id)
                 .get("/id/{id}")
                 .then()
                 .statusCode(200)
-                .body("categoryName", is(categoryName.toLowerCase()));
+                .body("categoryName", is(categoryName));
 
         // Update categoryname
-        categoryName = "Music";
-        dto = new CategoryDto(null, categoryName);
-        dto.id = Long.parseLong(id);
+        categoryName = "music";
+        dto = new CategoryDto(Long.parseLong(id), categoryName);
 
         given().contentType(ContentType.JSON)
                 .pathParam("id", id)
