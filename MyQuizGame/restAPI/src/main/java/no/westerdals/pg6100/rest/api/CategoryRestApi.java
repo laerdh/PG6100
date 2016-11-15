@@ -64,7 +64,7 @@ public interface CategoryRestApi {
     @Path("/id/{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    void updateCategory(
+    Response updateCategory(
             @ApiParam("The id of the category")
             @PathParam("id")
             Long id,

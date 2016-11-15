@@ -58,7 +58,7 @@ public class CategoryRest implements CategoryRestApi {
     // PUT
 
     @Override
-    public void updateCategory(Long id, CategoryDto dto) {
+    public Response updateCategory(Long id, CategoryDto dto) {
         if (id == null) {
             throw new WebApplicationException("Please provide a valid id", 400);
         }
@@ -75,6 +75,9 @@ public class CategoryRest implements CategoryRestApi {
         } catch (Exception e) {
             throw WebException.wrapException(e);
         }
+
+        return Response.status(200)
+                .build();
     }
 
     // POST

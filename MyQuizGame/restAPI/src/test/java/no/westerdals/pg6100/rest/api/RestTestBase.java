@@ -52,14 +52,14 @@ public class RestTestBase {
 
         get().then().statusCode(200).body("size()", is(0));
 
-        RestAssured.basePath = BASE_PATH + CATEGORY_PATH;
+        RestAssured.basePath = BASE_PATH + SUBSUBCATEGORY_PATH;
 
-        List<CategoryDto> listCategory = Arrays.asList(given().accept(ContentType.JSON).get()
+        List<SubSubCategoryDto> listSubSubCategory = Arrays.asList(given().accept(ContentType.JSON).get()
                 .then()
                 .statusCode(200)
-                .extract().as(CategoryDto[].class));
+                .extract().as(SubSubCategoryDto[].class));
 
-        listCategory.forEach(dto ->
+        listSubSubCategory.forEach(dto ->
             given().pathParam("id", dto.id)
                     .delete("/id/{id}")
                     .then().statusCode(204));
@@ -76,18 +76,33 @@ public class RestTestBase {
                     .delete("/id/{id}")
                     .then().statusCode(204));
 
-        RestAssured.basePath = BASE_PATH + SUBSUBCATEGORY_PATH;
+        RestAssured.basePath = BASE_PATH + CATEGORY_PATH;
 
-        List<SubSubCategoryDto> listSubSubCategory = Arrays.asList(given().accept(ContentType.JSON).get()
+        List<CategoryDto> listCategory = Arrays.asList(given().accept(ContentType.JSON).get()
                 .then()
                 .statusCode(200)
-                .extract().as(SubSubCategoryDto[].class));
+                .extract().as(CategoryDto[].class));
 
-        listSubSubCategory.forEach(dto ->
+        listCategory.forEach(dto ->
             given().pathParam("id", dto.id)
                     .delete("/id/{id}")
                     .then().statusCode(204));
 
         RestAssured.basePath = BASE_PATH;
+    }
+
+    protected String createCategory(String name) {
+        RestAssured.basePath = BASE_PATH + CATEGORY_PATH;
+        CategoryDto dto = new CategoryDto(null, name);
+
+        String id = given().contentType(ContentType.JSON)
+                .body(dto)
+                .post()
+                .then()
+                .statusCode(201)
+                .extract().asString();
+
+        RestAssured.basePath = BASE_PATH + SUBCATEGORY_PATH;
+        return id;
     }
 }
