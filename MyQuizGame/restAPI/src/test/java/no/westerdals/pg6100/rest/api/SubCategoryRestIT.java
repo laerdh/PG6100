@@ -45,12 +45,7 @@ public class SubCategoryRestIT extends RestTestBase {
 
         get().then().statusCode(200).body("size()", is(0));
 
-        String id = given().contentType(ContentType.JSON)
-                .body(dto)
-                .post()
-                .then()
-                .statusCode(201)
-                .extract().asString();
+        String id = postJson(dto);
 
         get().then().statusCode(200).body("size()", is(1));
 
@@ -76,12 +71,7 @@ public class SubCategoryRestIT extends RestTestBase {
 
         get().then().statusCode(200).body("size()", is(0));
 
-        String id = given().contentType(ContentType.JSON)
-                .body(dto)
-                .post()
-                .then()
-                .statusCode(201)
-                .extract().asString();
+        String id = postJson(dto);
 
         get().then().statusCode(200).body("size()", is(1));
 
@@ -104,12 +94,7 @@ public class SubCategoryRestIT extends RestTestBase {
 
         get().then().statusCode(200).body("size()", is(0));
 
-        String id = given().contentType(ContentType.JSON)
-                .body(dto)
-                .post()
-                .then()
-                .statusCode(201)
-                .extract().asString();
+        String id = postJson(dto);
 
         get().then().statusCode(200).body("size()", is(1));
 
@@ -130,6 +115,5 @@ public class SubCategoryRestIT extends RestTestBase {
                 .then()
                 .statusCode(200)
                 .body("categoryName", is(subCategoryName));
-
     }
 }

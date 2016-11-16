@@ -1,7 +1,6 @@
 package no.westerdals.pg6100.rest.api;
 
 import static io.restassured.RestAssured.*;
-import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 
@@ -37,12 +36,7 @@ public class SubSubCategoryRestIT extends RestTestBase {
 
         get().then().statusCode(200).body("size()", is(0));
 
-        String id = given().contentType(ContentType.JSON)
-                .body(dto)
-                .post()
-                .then()
-                .statusCode(201)
-                .extract().asString();
+        String id = postJson(dto);
 
         get().then().statusCode(200).body("size()", is(1));
 
@@ -69,12 +63,7 @@ public class SubSubCategoryRestIT extends RestTestBase {
 
         get().then().statusCode(200).body("size()", is(0));
 
-        String id = given().contentType(ContentType.JSON)
-                .body(dto)
-                .post()
-                .then()
-                .statusCode(201)
-                .extract().asString();
+        String id = postJson(dto);
 
         get().then().statusCode(200).body("size()", is(1));
 
@@ -95,12 +84,7 @@ public class SubSubCategoryRestIT extends RestTestBase {
 
         SubSubCategoryDto dto = new SubSubCategoryDto(null, categoryName, subCategoryId);
 
-        String id = given().contentType(ContentType.JSON)
-                .body(dto)
-                .post()
-                .then()
-                .statusCode(201)
-                .extract().asString();
+        String id = postJson(dto);
 
         // Update subsubcategory name
         categoryName = "la liga";

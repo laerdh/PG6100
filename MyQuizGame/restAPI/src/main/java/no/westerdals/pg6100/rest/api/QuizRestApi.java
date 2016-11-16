@@ -38,7 +38,7 @@ public interface QuizRestApi {
     @Path("/id/{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    void updateQuiz(
+    Response updateQuiz(
             @ApiParam("The id of the quiz to be updated")
             @PathParam("id")
             Long id,
@@ -53,7 +53,7 @@ public interface QuizRestApi {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @ApiResponse(code = 201, message = "The id of the newly created quiz")
-    Long createQuiz(
+    Response createQuiz(
         @ApiParam("Quiz id, question, answers and the id of the correct answer. Should not specify" +
                 "id at the time of creation")
         QuizDto dto

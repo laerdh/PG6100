@@ -40,7 +40,7 @@ public class QuizRest implements QuizRestApi {
     // PUT
 
     @Override
-    public void updateQuiz(Long id, QuizDto dto) {
+    public Response updateQuiz(Long id, QuizDto dto) {
         if (id == null) {
             throw new WebApplicationException("Please provide a valid id", 400);
         }
@@ -59,12 +59,16 @@ public class QuizRest implements QuizRestApi {
         } catch (Exception e) {
             throw WebException.wrapException(e);
         }
+
+        return Response
+                .status(200)
+                .build();
     }
 
     // POST
 
     @Override
-    public Long createQuiz(@ApiParam("Quiz id, question, answers and the id of the correct answer. Should not specify " +
+    public Response createQuiz(@ApiParam("Quiz id, question, answers and the id of the correct answer. Should not specify " +
             "id at the time of creation") QuizDto dto) {
         if (dto.id != null) {
             throw new WebApplicationException("Cannot specify id for a newly created quiz", 400);
@@ -86,7 +90,11 @@ public class QuizRest implements QuizRestApi {
             throw WebException.wrapException(e);
         }
 
-        return id;
+        return Response
+                .status(201)
+                .entity(id)
+                .location(URI.create(QUIZ_PATH + "/" + id))
+                .build();
     }
 
     // DELETE

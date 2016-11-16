@@ -33,12 +33,7 @@ public class CategoryRestIT extends RestTestBase {
 
         get().then().statusCode(200).body("size()", is(0));
 
-        String id = given().contentType(ContentType.JSON)
-                .body(dto)
-                .post()
-                .then()
-                .statusCode(201)
-                .extract().asString();
+        String id = postJson(dto);
 
         get().then().statusCode(200).body("size()", is(1));
 
@@ -59,12 +54,7 @@ public class CategoryRestIT extends RestTestBase {
 
         get().then().statusCode(200).body("size()", is(0));
 
-        String id = given().contentType(ContentType.JSON)
-                .body(dto)
-                .post()
-                .then()
-                .statusCode(201)
-                .extract().asString();
+        String id = postJson(dto);
 
         get().then().statusCode(200).body("size()", is(1));
 
@@ -81,12 +71,7 @@ public class CategoryRestIT extends RestTestBase {
         String categoryName = "sports";
         CategoryDto dto = new CategoryDto(null, categoryName);
 
-        String id = given().contentType(ContentType.JSON)
-                .body(dto)
-                .post()
-                .then()
-                .statusCode(201)
-                .extract().asString();
+        String id = postJson(dto);
 
         given().pathParam("id", id)
                 .get("/id/{id}")
@@ -111,6 +96,4 @@ public class CategoryRestIT extends RestTestBase {
                 .statusCode(200)
                 .body("categoryName", is(categoryName));
     }
-
-
 }
