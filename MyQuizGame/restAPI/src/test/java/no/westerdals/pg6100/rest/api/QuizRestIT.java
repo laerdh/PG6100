@@ -119,14 +119,4 @@ public class QuizRestIT extends RestTestBase {
         assertTrue(dto.answers.containsAll(answers));
         assertEquals(response.correctAnswer, correctAnswer);
     }
-
-    private QuizDto createQuiz(Long parentId) {
-        QuizDto dto = new QuizDto();
-        dto.question = "Who is Premier League's topscorer?";
-        dto.answers = new ArrayList<>(Arrays.asList("Diego Costa", "Sergio Aguero", "Zlatan Ibrahimovic", "Olivier Giroud"));
-        dto.correctAnswer = 0;
-        dto.parentCategoryId = parentId;
-
-        return dto;
-    }
 }

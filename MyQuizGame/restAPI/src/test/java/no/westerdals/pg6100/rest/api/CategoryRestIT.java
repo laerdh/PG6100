@@ -3,6 +3,7 @@ package no.westerdals.pg6100.rest.api;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import no.westerdals.pg6100.rest.dto.CategoryDto;
+import no.westerdals.pg6100.rest.dto.QuizDto;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,6 +11,8 @@ import org.junit.Test;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.hamcrest.collection.IsArrayContaining.hasItemInArray;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class CategoryRestIT extends RestTestBase {
 
@@ -95,5 +98,27 @@ public class CategoryRestIT extends RestTestBase {
                 .then()
                 .statusCode(200)
                 .body("categoryName", is(categoryName));
+    }
+
+    @Test
+    public void testCategoriesWithQuizzes() {
+        Long cat1 = Long.parseLong(createCategory("sports"));
+        Long cat2 = Long.parseLong(createCategory("music"));
+
+        Long subCat1 = Long.parseLong(createSubCategory("football", cat1));
+        Long subCat2 = Long.parseLong(createSubCategory("rock", cat2));
+        Long subCat3 = Long.parseLong(createSubCategory("classical", cat2));
+
+        Long subSubCat1 = Long.parseLong(createSubSubCategory("bands", subCat2));
+        Long subSubCat2 = Long.parseLong(createSubSubCategory("premier league", subCat1));
+
+
+        QuizDto dto = createQuiz(subSubCat2);
+        RestAssured.basePath = BASE_PATH + QUIZ_PATH;
+        String id = postJson(dto);
+
+        RestAssured.basePath = BASE_PATH + CATEGORY_WITH_QUIZZES_PATH;
+        get().then().statusCode(200).body("size()", is(1));
+        get().then().statusCode(200).body("categoryName", hasItem("sports"));
     }
 }

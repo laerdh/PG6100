@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class RestTestBase {
     protected static final String CATEGORY_PATH = "/categories";
     protected static final String SUBCATEGORY_PATH = "/subcategories";
     protected static final String SUBSUBCATEGORY_PATH = "/subsubcategories";
+    protected static final String CATEGORY_WITH_QUIZZES_PATH = "/categories/withQuizzes";
 
     @BeforeClass
     public static void initClass() {
@@ -119,5 +121,15 @@ public class RestTestBase {
                 .then()
                 .statusCode(201)
                 .extract().asString();
+    }
+
+    protected QuizDto createQuiz(Long parentId) {
+        QuizDto dto = new QuizDto();
+        dto.question = "Who is Premier League's topscorer?";
+        dto.answers = new ArrayList<>(Arrays.asList("Diego Costa", "Sergio Aguero", "Zlatan Ibrahimovic", "Olivier Giroud"));
+        dto.correctAnswer = 0;
+        dto.parentCategoryId = parentId;
+
+        return dto;
     }
 }
