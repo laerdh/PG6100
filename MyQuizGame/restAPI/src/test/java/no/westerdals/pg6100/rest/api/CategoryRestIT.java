@@ -11,7 +11,6 @@ import org.junit.Test;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
-import static org.hamcrest.collection.IsArrayContaining.hasItemInArray;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
 public class CategoryRestIT extends RestTestBase {
@@ -111,7 +110,6 @@ public class CategoryRestIT extends RestTestBase {
 
         Long subSubCat1 = Long.parseLong(createSubSubCategory("bands", subCat2));
         Long subSubCat2 = Long.parseLong(createSubSubCategory("premier league", subCat1));
-
 
         QuizDto dto = createQuiz(subSubCat2);
         RestAssured.basePath = BASE_PATH + QUIZ_PATH;

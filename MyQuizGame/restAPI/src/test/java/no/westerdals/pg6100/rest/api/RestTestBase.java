@@ -47,10 +47,7 @@ public class RestTestBase {
                 .statusCode(200)
                 .extract().as(QuizDto[].class));
 
-        listQuiz.forEach(dto ->
-            given().pathParam("id", dto.id)
-                    .delete("/id/{id}")
-                    .then().statusCode(204));
+        listQuiz.forEach(dto -> deleteResource(dto.id));
 
         get().then().statusCode(200).body("size()", is(0));
 
@@ -61,10 +58,7 @@ public class RestTestBase {
                 .statusCode(200)
                 .extract().as(SubSubCategoryDto[].class));
 
-        listSubSubCategory.forEach(dto ->
-            given().pathParam("id", dto.id)
-                    .delete("/id/{id}")
-                    .then().statusCode(204));
+        listSubSubCategory.forEach(dto -> deleteResource(dto.id));
 
         RestAssured.basePath = BASE_PATH + SUBCATEGORY_PATH;
 
@@ -73,10 +67,7 @@ public class RestTestBase {
                 .statusCode(200)
                 .extract().as(SubCategoryDto[].class));
 
-        listSubCategory.forEach(dto ->
-            given().pathParam("id", dto.id)
-                    .delete("/id/{id}")
-                    .then().statusCode(204));
+        listSubCategory.forEach(dto -> deleteResource(dto.id));
 
         RestAssured.basePath = BASE_PATH + CATEGORY_PATH;
 
@@ -85,10 +76,7 @@ public class RestTestBase {
                 .statusCode(200)
                 .extract().as(CategoryDto[].class));
 
-        listCategory.forEach(dto ->
-            given().pathParam("id", dto.id)
-                    .delete("/id/{id}")
-                    .then().statusCode(204));
+        listCategory.forEach(dto -> deleteResource(dto.id));
 
         RestAssured.basePath = BASE_PATH;
     }
@@ -121,6 +109,12 @@ public class RestTestBase {
                 .then()
                 .statusCode(201)
                 .extract().asString();
+    }
+
+    protected void deleteResource(Long id) {
+        given().pathParam("id", id)
+                .delete("/id/{id}")
+                .then().statusCode(204);
     }
 
     protected QuizDto createQuiz(Long parentId) {
