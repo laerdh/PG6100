@@ -34,19 +34,14 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
     }
 
     @Override
-    public SubSubCategoryDto getSubSubCategory(@ApiParam("The id of the subsubcategory") Long id) {
+    public SubSubCategoryDto getSubSubCategory(Long id) {
         return SubSubCategoryConverter.transform(categoryEJB.getSubSubCategoryById(id));
-    }
-
-    @Override
-    public List<SubSubCategoryDto> getSubSubCategoriesByParentId(@ApiParam("The id of the parent subcategory") Long id) {
-        return SubSubCategoryConverter.transform(categoryEJB.getSubSubCategoriesByParentID(id));
     }
 
     // POST
 
     @Override
-    public Response createSubSubCategory(@ApiParam("The id of the parent subsubcategory and category, name and id. " + "Should not specify id at time of creation") SubSubCategoryDto dto) {
+    public Response createSubSubCategory(SubSubCategoryDto dto) {
         if (dto.id != null) {
             throw new WebApplicationException("Cannot specify id for newly created subsubcategory", 400);
         }
@@ -134,11 +129,53 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
     // DELETE
 
     @Override
-    public void deleteSubSubCategory(@ApiParam("The id of the subsubcategory") Long id) {
+    public void deleteSubSubCategory(Long id) {
         if (id == null) {
             throw new WebApplicationException("Must provide a valid id", 400);
         }
 
         categoryEJB.deleteSubSubCategory(id);
+    }
+
+    // DEPRECATED
+
+    @Override
+    public Response getSubSubCategoryDeprecated(Long id) {
+        return Response
+                .status(301)
+                .location(URI.create(SUBSUBCATEGORY_PATH + "/" + id))
+                .build();
+    }
+
+    @Override
+    public Response getSubSubCategoriesByParentIdDeprecated(Long id) {
+        return Response
+                .status(301)
+                .location(URI.create("/subcategories/" + id + SUBSUBCATEGORY_PATH))
+                .build();
+    }
+
+    @Override
+    public Response updateSubSubCategoryDeprecated(Long id, SubSubCategoryDto dto) {
+        return Response
+                .status(301)
+                .location(URI.create(SUBSUBCATEGORY_PATH + "/" + id))
+                .build();
+    }
+
+    @Override
+    public Response updateSubSubCategoryNameDeprecated(Long id, String name) {
+        return Response
+                .status(301)
+                .location(URI.create(SUBSUBCATEGORY_PATH + "/" + id))
+                .build();
+    }
+
+    @Override
+    public Response deleteSubSubCategoryDeprecated(Long id) {
+        return Response
+                .status(301)
+                .location(URI.create(SUBSUBCATEGORY_PATH + "/" + id))
+                .build();
     }
 }

@@ -10,8 +10,9 @@ import org.junit.Test;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
 
 public class CategoryRestIT extends RestTestBase {
 
@@ -40,7 +41,7 @@ public class CategoryRestIT extends RestTestBase {
         get().then().statusCode(200).body("size()", is(1));
 
         CategoryDto response = given().pathParam("id", id)
-                .get("/id/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(200)
                 .extract().as(CategoryDto.class);
@@ -61,7 +62,7 @@ public class CategoryRestIT extends RestTestBase {
         get().then().statusCode(200).body("size()", is(1));
 
         given().pathParam("id", id)
-                .delete("/id/{id}")
+                .delete("/{id}")
                 .then()
                 .statusCode(204);
 
@@ -76,7 +77,7 @@ public class CategoryRestIT extends RestTestBase {
         String id = postJson(dto);
 
         given().pathParam("id", id)
-                .get("/id/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(200)
                 .body("categoryName", is(categoryName));
@@ -88,12 +89,12 @@ public class CategoryRestIT extends RestTestBase {
         given().contentType(ContentType.JSON)
                 .pathParam("id", id)
                 .body(dto)
-                .put("/id/{id}")
+                .put("/{id}")
                 .then()
                 .statusCode(200);
 
         given().pathParam("id", id)
-                .get("/id/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(200)
                 .body("categoryName", is(categoryName));
@@ -105,7 +106,7 @@ public class CategoryRestIT extends RestTestBase {
         String id = createCategory(categoryName);
 
         given().pathParam("id", id)
-                .get("/id/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(200)
                 .body("categoryName", is(categoryName));
@@ -115,12 +116,12 @@ public class CategoryRestIT extends RestTestBase {
         given().contentType(ContentType.TEXT)
                 .pathParam("id", id)
                 .body(newCategoryName)
-                .patch("/id/{id}")
+                .patch("/{id}")
                 .then()
                 .statusCode(200);
 
         given().pathParam("id", id)
-                .get("/id/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(200)
                 .body("categoryName", is(newCategoryName));
@@ -165,5 +166,17 @@ public class CategoryRestIT extends RestTestBase {
         RestAssured.basePath = BASE_PATH + SUBSUBCATEGORY_WITH_QUIZZES_PATH;
         get().then().statusCode(200).body("size()", is(1));
         get().then().statusCode(200).body("categoryName", hasItem("premier league"));
+    }
+
+    @Test
+    public void testGetCategoryDeprecatedURI() {
+        String categoryName = "sports";
+        Long id = Long.parseLong(createCategory(categoryName));
+
+        given().pathParam("id", id)
+                .get("/id/{id}")
+                .then()
+                .statusCode(200)
+                .body("categoryName", is(categoryName));
     }
 }

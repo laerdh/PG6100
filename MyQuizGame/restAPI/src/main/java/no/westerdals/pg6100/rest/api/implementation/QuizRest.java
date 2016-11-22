@@ -35,15 +35,14 @@ public class QuizRest implements QuizRestApi {
     }
 
     @Override
-    public QuizDto getQuiz(@ApiParam("The id of the quiz") Long id) {
+    public QuizDto getQuiz(Long id) {
         return QuizConverter.transform(quizEJB.getQuiz(id));
     }
 
     // POST
 
     @Override
-    public Response createQuiz(@ApiParam("Quiz id, question, answers and the id of the correct answer. Should not specify " +
-            "id at the time of creation") QuizDto dto) {
+    public Response createQuiz(QuizDto dto) {
         if (dto.id != null) {
             throw new WebApplicationException("Cannot specify id for a newly created quiz", 400);
         }
@@ -132,12 +131,46 @@ public class QuizRest implements QuizRestApi {
     // DELETE
 
     @Override
-    public void deleteQuiz(@ApiParam("The id of the quiz") Long id) {
+    public void deleteQuiz(Long id) {
         if (id == null) {
             throw new WebApplicationException("Must provide a valid id", 400);
         }
 
         quizEJB.deleteQuiz(id);
+    }
+
+    // DEPRECATED
+
+    @Override
+    public Response getQuizDeprecated(Long id) {
+        return Response
+                .status(301)
+                .location(URI.create(QUIZ_PATH + "/" + id))
+                .build();
+    }
+
+    @Override
+    public Response updateQuizDeprecated(Long id, QuizDto dto) {
+        return Response
+                .status(301)
+                .location(URI.create(QUIZ_PATH + "/" + id))
+                .build();
+    }
+
+    @Override
+    public Response updateQuizQuestionDeprecated(Long id, String question) {
+        return Response
+                .status(301)
+                .location(URI.create(QUIZ_PATH + "/" + id))
+                .build();
+    }
+
+    @Override
+    public Response deleteQuizDeprecated(Long id) {
+        return Response
+                .status(301)
+                .location(URI.create(QUIZ_PATH + "/" + id))
+                .build();
     }
 
     private boolean isValid(String... input) {

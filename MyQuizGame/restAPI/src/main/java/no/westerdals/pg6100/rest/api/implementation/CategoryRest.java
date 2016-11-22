@@ -1,6 +1,7 @@
 package no.westerdals.pg6100.rest.api.implementation;
 
 import com.google.common.base.Strings;
+import io.swagger.annotations.ApiParam;
 import no.westerdals.pg6100.backend.ejb.CategoryEJB;
 import no.westerdals.pg6100.rest.api.CategoryRestApi;
 import no.westerdals.pg6100.rest.api.utils.WebException;
@@ -140,5 +141,47 @@ public class CategoryRest implements CategoryRestApi {
         }
 
         categoryEJB.deleteCategory(id);
+    }
+
+    // DEPRECATED
+
+    @Override
+    public Response getCategoryDeprecated(Long id) {
+        return Response
+                .status(301)
+                .location(URI.create(CATEGORY_PATH + "/" + id))
+                .build();
+    }
+
+    @Override
+    public Response getSubCategoriesDeprecated(Long id) {
+        return Response
+                .status(301)
+                .location(URI.create(CATEGORY_PATH + "/" + id + "/subcategories"))
+                .build();
+    }
+
+    @Override
+    public Response updateCategoryDeprecated(Long id, CategoryDto dto) {
+        return Response
+                .status(301)
+                .location(URI.create(CATEGORY_PATH + "/" + id))
+                .build();
+    }
+
+    @Override
+    public Response updateCategoryNameDeprecated(Long id, String name) {
+        return Response
+                .status(301)
+                .location(URI.create(CATEGORY_PATH + "/" + id))
+                .build();
+    }
+
+    @Override
+    public Response deleteCategoryDeprecated(Long id) {
+        return Response
+                .status(301)
+                .location(URI.create(CATEGORY_PATH + "/" + id))
+                .build();
     }
 }

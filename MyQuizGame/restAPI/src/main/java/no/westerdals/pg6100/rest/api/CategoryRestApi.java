@@ -1,9 +1,6 @@
 package no.westerdals.pg6100.rest.api;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.*;
 import io.swagger.jaxrs.PATCH;
 import no.westerdals.pg6100.rest.api.utils.Formats;
 import no.westerdals.pg6100.rest.dto.CategoryDto;
@@ -24,6 +21,8 @@ import java.util.List;
 })
 public interface CategoryRestApi {
 
+    String ID_PARAM = "The id of the category";
+
     // GET
 
     @ApiOperation("Retrieve a list of all the categories")
@@ -32,20 +31,28 @@ public interface CategoryRestApi {
 
 
     @ApiOperation("Retrieve a category by its id")
-    @Path("/id/{id}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "The requested category"),
+            @ApiResponse(code = 404, message = "Category could not be found")
+    })
+    @Path("/{id}")
     @GET
     CategoryDto getCategory(
-            @ApiParam("The id of the category")
+            @ApiParam(ID_PARAM)
             @PathParam("id")
             Long id
     );
 
 
-    @ApiOperation("Retrieve a list of sub-categories")
-    @Path("/id/{id}/subcategories")
+    @ApiOperation("Retrieve a list of subcategories")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "The requested list of subcategories"),
+            @ApiResponse(code = 404, message = "Subcategories could not be found")
+    })
+    @Path("/{id}/subcategories")
     @GET
     List<SubCategoryDto> getSubCategories(
-            @ApiParam("The id of the category")
+            @ApiParam(ID_PARAM)
             @PathParam("id")
             Long id
     );
@@ -78,27 +85,34 @@ public interface CategoryRestApi {
     // PUT
 
     @ApiOperation("Update an existing category")
-    @Path("/id/{id}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "The category was updated"),
+            @ApiResponse(code = 404, message = "Category to be updated could not be found")
+    })
+    @Path("/{id}")
     @PUT
     @Consumes({Formats.BASE_JSON, Formats.V1_JSON})
     Response updateCategory(
-            @ApiParam("The id of the category")
+            @ApiParam(ID_PARAM)
             @PathParam("id")
-                    Long id,
+            Long id,
 
             @ApiParam("The category that will replace the old one. Id cannot be changed.")
-                    CategoryDto dto
+            CategoryDto dto
     );
 
     // PATCH
 
     @ApiOperation("Update the name of a category")
-    @Path("/id/{id}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "The category name was successfully updated"),
+            @ApiResponse(code = 404, message = "Category to be updated could not be found")
+    })
+    @Path("/{id}")
     @PATCH
     @Consumes(MediaType.TEXT_PLAIN)
-    @ApiResponse(code = 200, message = "The id of the updated category")
     Response updateCategoryName(
-            @ApiParam("The id of the category to be updated")
+            @ApiParam(ID_PARAM)
             @PathParam("id")
             Long id,
 
@@ -109,10 +123,81 @@ public interface CategoryRestApi {
     // DELETE
 
     @ApiOperation("Delete a category")
+    @ApiResponse(code = 204, message = "The category was deleted")
+    @DELETE
+    @Path("/{id}")
+    void deleteCategory(
+            @ApiParam(ID_PARAM)
+            @PathParam("id")
+            Long id
+    );
+
+    // DEPRECATED
+
+    @ApiOperation("Deprectaded. Use \"/{id}\" instead. Retrieve a category by its id")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @Path("/id/{id}")
+    @GET
+    @Deprecated
+    Response getCategoryDeprecated(
+            @ApiParam(ID_PARAM)
+            @PathParam("id")
+                    Long id
+    );
+
+
+    @ApiOperation("Deprecated. Use \"/{id}/subcategories\" instead. Retrieve a list of sub-categories")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @Path("/id/{id}/subcategories")
+    @GET
+    @Deprecated
+    Response getSubCategoriesDeprecated(
+            @ApiParam(ID_PARAM)
+            @PathParam("id")
+                    Long id
+    );
+
+
+    @ApiOperation("Deprecated. Use \"/{id}\" instead. Update an existing category")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @Path("/id/{id}")
+    @PUT
+    @Consumes({Formats.BASE_JSON, Formats.V1_JSON})
+    @Deprecated
+    Response updateCategoryDeprecated(
+            @ApiParam(ID_PARAM)
+            @PathParam("id")
+                    Long id,
+
+            @ApiParam("The category that will replace the old one. Id cannot be changed.")
+                    CategoryDto dto
+    );
+
+
+    @ApiOperation("Deprecated. Use \"/{id}\" instead. Update the name of a category")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently")
+    @Path("/id/{id}")
+    @PATCH
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Deprecated
+    Response updateCategoryNameDeprecated(
+            @ApiParam(ID_PARAM)
+            @PathParam("id")
+                    Long id,
+
+            @ApiParam("The new name of the category")
+                    String name
+    );
+
+
+    @ApiOperation("Deprecated. Use \"/{id}\" instead. Delete a category")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
     @DELETE
     @Path("/id/{id}")
-    void deleteCategory(
-            @ApiParam("The id of the category")
+    @Deprecated
+    Response deleteCategoryDeprecated(
+            @ApiParam(ID_PARAM)
             @PathParam("id")
-            Long id);
+                    Long id
+    );
 }

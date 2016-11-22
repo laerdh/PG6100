@@ -42,7 +42,7 @@ public class SubSubCategoryRestIT extends RestTestBase {
 
         SubSubCategoryDto response = given()
                 .pathParam("id", id)
-                .get("/id/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(200)
                 .extract().as(SubSubCategoryDto.class);
@@ -68,7 +68,7 @@ public class SubSubCategoryRestIT extends RestTestBase {
         get().then().statusCode(200).body("size()", is(1));
 
         given().pathParam("id", id)
-                .delete("/id/{id}")
+                .delete("/{id}")
                 .then()
                 .statusCode(204);
 
@@ -93,13 +93,13 @@ public class SubSubCategoryRestIT extends RestTestBase {
         given().contentType(ContentType.JSON)
                 .pathParam("id", id)
                 .body(dto)
-                .put("/id/{id}")
+                .put("/{id}")
                 .then()
                 .statusCode(200);
 
         SubSubCategoryDto response = given()
                 .pathParam("id", id)
-                .get("/id/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(200)
                 .extract().as(SubSubCategoryDto.class);
@@ -118,7 +118,7 @@ public class SubSubCategoryRestIT extends RestTestBase {
         Long id = Long.parseLong(createSubSubCategory(categoryName, subCategoryId));
 
         given().pathParam("id", id)
-                .get("/id/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(200)
                 .body("categoryName", is(categoryName));
@@ -128,12 +128,12 @@ public class SubSubCategoryRestIT extends RestTestBase {
         given().contentType(ContentType.TEXT)
                 .pathParam("id", id)
                 .body(newCategoryName)
-                .patch("/id/{id}")
+                .patch("/{id}")
                 .then()
                 .statusCode(200);
 
         given().pathParam("id", id)
-                .get("/id/{id}")
+                .get("/{id}")
                 .then()
                 .statusCode(200)
                 .body("categoryName", is(newCategoryName));

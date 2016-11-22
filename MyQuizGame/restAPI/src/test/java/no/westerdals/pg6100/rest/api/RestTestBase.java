@@ -114,7 +114,7 @@ public class RestTestBase {
 
     protected void deleteResource(Long id) {
         given().pathParam("id", id)
-                .delete("/id/{id}")
+                .delete("/{id}")
                 .then().statusCode(204);
     }
 

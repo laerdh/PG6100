@@ -1,9 +1,6 @@
 package no.westerdals.pg6100.rest.api;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.*;
 import io.swagger.jaxrs.PATCH;
 import no.westerdals.pg6100.rest.api.utils.Formats;
 import no.westerdals.pg6100.rest.dto.QuizDto;
@@ -21,6 +18,8 @@ import java.util.List;
 })
 public interface QuizRestApi {
 
+    String ID_PARAM = "The id of the quiz";
+
     // GET
 
     @ApiOperation("Retrieve a list of quizzes")
@@ -29,7 +28,11 @@ public interface QuizRestApi {
 
 
     @ApiOperation("Retrieve a quiz by its id")
-    @Path("/id/{id}")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "The requested quiz"),
+            @ApiResponse(code = 404, message = "Quiz could not be found")
+    })
+    @Path("/{id}")
     @GET
     QuizDto getQuiz(
             @ApiParam("The id of the quiz")
@@ -53,11 +56,12 @@ public interface QuizRestApi {
     // PUT
 
     @ApiOperation("Update a quiz")
-    @Path("/id/{id}")
+    @ApiResponse(code = 200, message = "The quiz was successfully updated")
     @PUT
+    @Path("/{id}")
     @Consumes({Formats.BASE_JSON, Formats.V1_JSON})
     Response updateQuiz(
-            @ApiParam("The id of the quiz to be updated")
+            @ApiParam(ID_PARAM)
             @PathParam("id")
             Long id,
 
@@ -68,11 +72,12 @@ public interface QuizRestApi {
     // PATCH
 
     @ApiOperation("Update the question of a quiz")
-    @Path("/id/{id}")
+    @ApiResponse(code = 200, message = "The question of a quiz was successfully updated")
     @PATCH
+    @Path("/{id}")
     @Consumes(MediaType.TEXT_PLAIN)
     Response updateQuizQuestion(
-            @ApiParam("The id of the quiz to be updated")
+            @ApiParam(ID_PARAM)
             @PathParam("id")
             Long id,
 
@@ -83,11 +88,69 @@ public interface QuizRestApi {
     // DELETE
 
     @ApiOperation("Delete a quiz")
+    @ApiResponse(code = 204, message = "The quiz was deleted")
     @DELETE
-    @Path("/id/{id}")
+    @Path("/{id}")
     void deleteQuiz(
-            @ApiParam("The id of the quiz")
+            @ApiParam(ID_PARAM)
             @PathParam("id")
             Long id
+    );
+
+    // DEPRECATED
+
+    @ApiOperation("Deprecated. Use \"/{id}\" instead. Retrieve a quiz by its id")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @GET
+    @Path("/id/{id}")
+    @Deprecated
+    Response getQuizDeprecated(
+            @ApiParam(ID_PARAM)
+            @PathParam("id")
+            Long id
+    );
+
+
+    @ApiOperation("Deprecated. Use \"/{id}\" instead. Delete a quiz")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @DELETE
+    @Path("/id/{id}")
+    @Deprecated
+    Response deleteQuizDeprecated(
+            @ApiParam(ID_PARAM)
+            @PathParam("id")
+            Long id
+    );
+
+
+    @ApiOperation("Deprecated. Use \"/{id}\" instead. Update a quiz")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @PUT
+    @Path("/id/{id}")
+    @Consumes({Formats.BASE_JSON, Formats.V1_JSON})
+    @Deprecated
+    Response updateQuizDeprecated(
+            @ApiParam(ID_PARAM)
+            @PathParam("id")
+                    Long id,
+
+            @ApiParam("The quiz that will replace the old one. Id cannot be changed.")
+                    QuizDto dto
+    );
+
+
+    @ApiOperation("Deprecated. Use \"/{id}\" instead. Update the question of a quiz")
+    @ApiResponse(code = 301, message = "Deprecated URI. Moved permanently.")
+    @PATCH
+    @Path("/id/{id}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Deprecated
+    Response updateQuizQuestionDeprecated(
+            @ApiParam(ID_PARAM)
+            @PathParam("id")
+                    Long id,
+
+            @ApiParam("The updated question")
+                    String question
     );
 }
