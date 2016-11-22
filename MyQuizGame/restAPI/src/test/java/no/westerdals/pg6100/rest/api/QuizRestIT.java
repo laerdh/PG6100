@@ -119,4 +119,31 @@ public class QuizRestIT extends RestTestBase {
         assertTrue(dto.answers.containsAll(answers));
         assertEquals(response.correctAnswer, correctAnswer);
     }
+
+    @Test
+    public void testCreateAndUpdateQuizQuestion() {
+        Long categoryId = Long.parseLong(createCategory("sports"));
+        Long subCategoryId = Long.parseLong(createSubCategory("football", categoryId));
+        Long subSubCategoryId = Long.parseLong(createSubSubCategory("premier league", subCategoryId));
+        setBasePath();
+
+        QuizDto dto = createQuiz(subSubCategoryId);
+        String id = postJson(dto);
+
+        // Update question
+        String newQuestion = "Who is the current topscorer in Premier League?";
+
+        given().contentType(ContentType.TEXT)
+                .pathParam("id", id)
+                .body(newQuestion)
+                .patch("/id/{id}")
+                .then()
+                .statusCode(200);
+
+        given().pathParam("id", id)
+                .get("/id/{id}")
+                .then()
+                .statusCode(200)
+                .body("question", is(newQuestion));
+    }
 }

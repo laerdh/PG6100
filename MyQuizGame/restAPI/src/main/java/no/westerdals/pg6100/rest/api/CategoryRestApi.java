@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
+import io.swagger.jaxrs.PATCH;
 import no.westerdals.pg6100.rest.dto.CategoryDto;
 import no.westerdals.pg6100.rest.dto.SubCategoryDto;
 import no.westerdals.pg6100.rest.dto.SubSubCategoryDto;
@@ -82,6 +83,22 @@ public interface CategoryRestApi {
     Response createCategory(
             @ApiParam("The name of the category and id. Should not specify id at the time of creation")
             CategoryDto dto);
+
+    // PATCH
+
+    @ApiOperation("Update the name of a category")
+    @Path("/id/{id}")
+    @PATCH
+    @Consumes(MediaType.TEXT_PLAIN)
+    @ApiResponse(code = 200, message = "The id of the updated category")
+    Response updateCategoryName(
+            @ApiParam("The id of the category to be updated")
+            @PathParam("id")
+            Long id,
+
+            @ApiParam("The new name of the category")
+            String name
+    );
 
     // DELETE
 

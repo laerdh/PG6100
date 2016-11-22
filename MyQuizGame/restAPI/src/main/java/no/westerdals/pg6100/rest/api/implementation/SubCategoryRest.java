@@ -1,5 +1,6 @@
 package no.westerdals.pg6100.rest.api.implementation;
 
+import com.google.common.base.Strings;
 import io.swagger.annotations.ApiParam;
 import no.westerdals.pg6100.backend.ejb.CategoryEJB;
 import no.westerdals.pg6100.rest.api.SubCategoryRestApi;
@@ -49,12 +50,37 @@ public class SubCategoryRest implements SubCategoryRestApi {
         return SubSubCategoryConverter.transform(categoryEJB.getSubSubCategoriesByParentID(id));
     }
 
+    // POST
+
+    @Override
+    public Response createSubCategory(@ApiParam("Id, name and category id. Should not specify id at time of creation") SubCategoryDto dto) {
+        if (dto.id != null) {
+            throw new WebApplicationException("Cannot specify id for newly created subcategory", 400);
+        }
+
+        Long id;
+        try {
+            id = categoryEJB.createSubCategory(dto.parentCategoryId, dto.categoryName);
+        } catch (Exception e) {
+            throw WebException.wrapException(e);
+        }
+
+        if (id == null) {
+            throw new WebApplicationException("Parent category does not exist", 400);
+        }
+
+        return Response.status(201)
+                .entity(id)
+                .location(URI.create(SUBCATEGORY_PATH + "/" + id))
+                .build();
+    }
+
     // PUT
 
     @Override
     public Response updateSubCategory(Long id, SubCategoryDto dto) {
         if (id == null) {
-            throw new WebApplicationException("Please provide a valid id", 400);
+            throw new WebApplicationException("Must provide a valid id", 400);
         }
 
         if (id.longValue() != dto.id) {
@@ -71,28 +97,36 @@ public class SubCategoryRest implements SubCategoryRestApi {
             throw WebException.wrapException(e);
         }
 
-        return Response.status(200)
+        return Response
+                .status(200)
                 .build();
     }
 
-    // POST
+    // PATCH
 
     @Override
-    public Response createSubCategory(@ApiParam("Id, name and category id. Should not specify id at time of creation") SubCategoryDto dto) {
-        if (dto.id != null) {
-            throw new WebApplicationException("Cannot specify id for newly created subcategory", 400);
+    public Response updateSubCategoryName(Long id, String name) {
+        if (id == null) {
+            throw new WebApplicationException("Must provide a valid id", 400);
         }
 
-        Long id;
+        if (categoryEJB.getSubCategoryById(id) == null) {
+            throw new WebApplicationException("Cannot find subcategory with id " + id, 404);
+        }
+
+        if (Strings.isNullOrEmpty(name)) {
+            throw new WebApplicationException("Category name cannot be empty", 400);
+        }
+
+
         try {
-            id = categoryEJB.createSubCategory(dto.parentCategoryId, dto.categoryName);
+            categoryEJB.updateSubCategoryName(id, name);
         } catch (Exception e) {
             throw WebException.wrapException(e);
         }
 
-        return Response.status(201)
-                .entity(id)
-                .location(URI.create(SUBCATEGORY_PATH + "/" + id))
+        return Response
+                .status(200)
                 .build();
     }
 
@@ -101,7 +135,7 @@ public class SubCategoryRest implements SubCategoryRestApi {
     @Override
     public void deleteSubCategory(@ApiParam("The id of the subcategory") Long id) {
         if (id == null) {
-            throw new WebApplicationException("Must provide an id", 400);
+            throw new WebApplicationException("Must provide a valid id", 400);
         }
 
         categoryEJB.deleteSubCategory(id);

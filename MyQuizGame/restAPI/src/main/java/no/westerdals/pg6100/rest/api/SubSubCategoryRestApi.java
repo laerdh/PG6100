@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
+import io.swagger.jaxrs.PATCH;
 import no.westerdals.pg6100.rest.dto.SubSubCategoryDto;
 
 import javax.ws.rs.*;
@@ -42,20 +43,6 @@ public interface SubSubCategoryRestApi {
             Long id
     );
 
-    // PUT
-    @ApiOperation("Update an existing subsubcategory")
-    @Path("/id/{id}")
-    @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    Response updateSubSubCategory(
-            @ApiParam("The id of the subsubcategory to be updated")
-            @PathParam("id")
-            Long id,
-
-            @ApiParam("The subsubcategory that will replace the old one. Id cannot be changed.")
-            SubSubCategoryDto dto
-    );
-
     // POST
 
     @ApiOperation("Create a subsubcategory")
@@ -66,6 +53,36 @@ public interface SubSubCategoryRestApi {
             @ApiParam("The id of the parent subsubcategory and category, name and id. " +
                     "Should not specify id at time of creation")
             SubSubCategoryDto dto
+    );
+
+    // PUT
+
+    @ApiOperation("Update an existing subsubcategory")
+    @Path("/id/{id}")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    Response updateSubSubCategory(
+            @ApiParam("The id of the subsubcategory to be updated")
+            @PathParam("id")
+                    Long id,
+
+            @ApiParam("The subsubcategory that will replace the old one. Id cannot be changed.")
+                    SubSubCategoryDto dto
+    );
+
+    // PATCH
+
+    @ApiOperation("Update the name of a subsubcategory")
+    @Path("/id/{id}")
+    @PATCH
+    @Consumes(MediaType.TEXT_PLAIN)
+    Response updateSubSubCategoryName(
+            @ApiParam("The id of the subsubcategory to be updated")
+            @PathParam("id")
+            Long id,
+
+            @ApiParam("The new name of the subsubcategory")
+            String name
     );
 
     // DELETE

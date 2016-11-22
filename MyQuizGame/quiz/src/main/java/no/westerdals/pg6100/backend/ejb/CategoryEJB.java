@@ -112,6 +112,23 @@ public class CategoryEJB {
         return true;
     }
 
+    public boolean updateSubCategoryName(Long id, String subCategory) {
+        if (id == null || !validInput(subCategory)) {
+            return false;
+        }
+
+        SubCategory sc = em.find(SubCategory.class, id);
+
+        if (sc == null) {
+            return false;
+        }
+
+        sc.setCategoryName(formatInput(subCategory));
+
+        em.merge(sc);
+        return true;
+    }
+
     public Long createSubSubCategory(Long parentId, String subSubCategory) {
         if (!validInput(subSubCategory) || parentId == null) {
             return null;
@@ -148,6 +165,23 @@ public class CategoryEJB {
         }
 
         ssc.setParentSubCategory(sc);
+        ssc.setCategoryName(subSubCategory);
+
+        em.merge(ssc);
+        return true;
+    }
+
+    public boolean updateSubSubCategoryName(Long id, String subSubCategory) {
+        if (id == null || !validInput(subSubCategory)) {
+            return false;
+        }
+
+        SubSubCategory ssc = em.find(SubSubCategory.class, id);
+
+        if (ssc == null) {
+            return false;
+        }
+
         ssc.setCategoryName(subSubCategory);
 
         em.merge(ssc);

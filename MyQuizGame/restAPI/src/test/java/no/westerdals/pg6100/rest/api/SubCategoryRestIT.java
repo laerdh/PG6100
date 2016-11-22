@@ -116,4 +116,33 @@ public class SubCategoryRestIT extends RestTestBase {
                 .statusCode(200)
                 .body("categoryName", is(subCategoryName));
     }
+
+    @Test
+    public void testCreateAndUpdateSubCategoryName() {
+        String categoryName = "football";
+        Long categoryId = Long.parseLong(createCategory("sports"));
+
+        Long id = Long.parseLong(createSubCategory(categoryName, categoryId));
+
+        given().pathParam("id", id)
+                .get("/id/{id}")
+                .then()
+                .statusCode(200)
+                .body("categoryName", is(categoryName));
+
+        String newCategoryName = "cricket";
+
+        given().contentType(ContentType.TEXT)
+                .pathParam("id", id)
+                .body(newCategoryName)
+                .patch("/id/{id}")
+                .then()
+                .statusCode(200);
+
+        given().pathParam("id", id)
+                .get("/id/{id}")
+                .then()
+                .statusCode(200)
+                .body("categoryName", is(newCategoryName));
+    }
 }

@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
+import io.swagger.jaxrs.PATCH;
 import no.westerdals.pg6100.rest.dto.QuizDto;
 
 import javax.ws.rs.*;
@@ -32,6 +33,18 @@ public interface QuizRestApi {
             Long id
     );
 
+    // POST
+
+    @ApiOperation("Create a quiz")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @ApiResponse(code = 201, message = "The id of the newly created quiz")
+    Response createQuiz(
+            @ApiParam("Quiz id, question, answers and the id of the correct answer. Should not specify" +
+                "id at the time of creation")
+            QuizDto dto
+    );
+
     // PUT
 
     @ApiOperation("Update a quiz")
@@ -47,16 +60,19 @@ public interface QuizRestApi {
             QuizDto dto
     );
 
-    // POST
+    // PATCH
 
-    @ApiOperation("Create a quiz")
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @ApiResponse(code = 201, message = "The id of the newly created quiz")
-    Response createQuiz(
-        @ApiParam("Quiz id, question, answers and the id of the correct answer. Should not specify" +
-                "id at the time of creation")
-        QuizDto dto
+    @ApiOperation("Update the question of a quiz")
+    @Path("/id/{id}")
+    @PATCH
+    @Consumes(MediaType.TEXT_PLAIN)
+    Response updateQuizQuestion(
+            @ApiParam("The id of the quiz to be updated")
+            @PathParam("id")
+            Long id,
+
+            @ApiParam("The updated question")
+            String question
     );
 
     // DELETE

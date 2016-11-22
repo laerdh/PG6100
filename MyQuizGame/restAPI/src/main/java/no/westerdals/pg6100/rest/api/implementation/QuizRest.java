@@ -1,7 +1,9 @@
 package no.westerdals.pg6100.rest.api.implementation;
 
+import com.google.common.base.Strings;
 import io.swagger.annotations.ApiParam;
 import no.westerdals.pg6100.backend.ejb.QuizEJB;
+import no.westerdals.pg6100.backend.entity.Quiz;
 import no.westerdals.pg6100.rest.api.QuizRestApi;
 import no.westerdals.pg6100.rest.api.utils.WebException;
 import no.westerdals.pg6100.rest.dto.QuizDto;
@@ -37,34 +39,6 @@ public class QuizRest implements QuizRestApi {
         return QuizConverter.transform(quizEJB.getQuiz(id));
     }
 
-    // PUT
-
-    @Override
-    public Response updateQuiz(Long id, QuizDto dto) {
-        if (id == null) {
-            throw new WebApplicationException("Please provide a valid id", 400);
-        }
-
-        if (id.longValue() != dto.id) {
-            throw new WebApplicationException("Not allowed to change the id of the resource", 409);
-        }
-
-        if (quizEJB.getQuiz(id) == null) {
-            throw new WebApplicationException("Not allowed to create a quiz with PUT, and cannot find quiz with id: " +
-                    id, 404);
-        }
-
-        try {
-            quizEJB.updateQuiz(id, dto.parentCategoryId, dto.question, dto.answers, dto.correctAnswer);
-        } catch (Exception e) {
-            throw WebException.wrapException(e);
-        }
-
-        return Response
-                .status(200)
-                .build();
-    }
-
     // POST
 
     @Override
@@ -97,12 +71,66 @@ public class QuizRest implements QuizRestApi {
                 .build();
     }
 
+    // PUT
+
+    @Override
+    public Response updateQuiz(Long id, QuizDto dto) {
+        if (id == null) {
+            throw new WebApplicationException("Must provide a valid id", 400);
+        }
+
+        if (id.longValue() != dto.id) {
+            throw new WebApplicationException("Not allowed to change the id of the resource", 409);
+        }
+
+        if (quizEJB.getQuiz(id) == null) {
+            throw new WebApplicationException("Not allowed to create a quiz with PUT, and cannot find quiz with id: " +
+                    id, 404);
+        }
+
+        try {
+            quizEJB.updateQuiz(id, dto.parentCategoryId, dto.question, dto.answers, dto.correctAnswer);
+        } catch (Exception e) {
+            throw WebException.wrapException(e);
+        }
+
+        return Response
+                .status(200)
+                .build();
+    }
+
+    // PATCH
+
+    @Override
+    public Response updateQuizQuestion(Long id, String question) {
+        if (id == null) {
+            throw new WebApplicationException("Must provide a valid id", 400);
+        }
+
+        if (Strings.isNullOrEmpty(question)) {
+            throw new WebApplicationException("Question cannot be empty", 400);
+        }
+
+        Quiz q = quizEJB.getQuiz(id);
+
+        try {
+            quizEJB.updateQuiz(q.getId(), q.getParentSubSubCategory().getId(), question,
+                    q.getAnswers(), q.getCorrectAnswer());
+        } catch (Exception e) {
+            throw WebException.wrapException(e);
+        }
+
+        return Response
+                .status(200)
+                .build();
+    }
+
     // DELETE
 
     @Override
     public void deleteQuiz(@ApiParam("The id of the quiz") Long id) {
         if (id == null) {
-            throw new WebApplicationException("Must provide an id", 400);
+            throw new WebApplicationException("Must provide a valid id", 400);
         }
 
         quizEJB.deleteQuiz(id);

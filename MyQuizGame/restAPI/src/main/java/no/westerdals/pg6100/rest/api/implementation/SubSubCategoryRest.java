@@ -1,5 +1,6 @@
 package no.westerdals.pg6100.rest.api.implementation;
 
+import com.google.common.base.Strings;
 import io.swagger.annotations.ApiParam;
 import no.westerdals.pg6100.backend.ejb.CategoryEJB;
 import no.westerdals.pg6100.rest.api.SubSubCategoryRestApi;
@@ -42,33 +43,6 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
         return SubSubCategoryConverter.transform(categoryEJB.getSubSubCategoriesByParentID(id));
     }
 
-    // PUT
-
-    @Override
-    public Response updateSubSubCategory(Long id, SubSubCategoryDto dto) {
-        if (id == null) {
-            throw new WebApplicationException("Please provide a valid id", 400);
-        }
-
-        if (id.longValue() != dto.id) {
-            throw new WebApplicationException("Not allowed to change the id of the resource", 409);
-        }
-
-        if (categoryEJB.getSubSubCategoryById(id) == null) {
-            throw new WebApplicationException("Not allowed to create a subsubcategory with PUT, and cannot find subsubcategory" +
-                    "with id: " + id, 404);
-        }
-
-        try {
-            categoryEJB.updateSubSubCategory(id, dto.parentCategoryId, dto.categoryName);
-        } catch (Exception e) {
-            throw WebException.wrapException(e);
-        }
-
-        return Response.status(200)
-                .build();
-    }
-
     // POST
 
     @Override
@@ -92,9 +66,68 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
             throw WebException.wrapException(e);
         }
 
+        if (id == null) {
+            throw new WebApplicationException("The parent category does not exist", 400);
+        }
+
         return Response.status(201)
                 .entity(id)
                 .location(URI.create(SUBSUBCATEGORY_PATH + "/" + id))
+                .build();
+    }
+
+    // PUT
+
+    @Override
+    public Response updateSubSubCategory(Long id, SubSubCategoryDto dto) {
+        if (id == null) {
+            throw new WebApplicationException("Must provide a valid id", 400);
+        }
+
+        if (id.longValue() != dto.id) {
+            throw new WebApplicationException("Not allowed to change the id of the resource", 409);
+        }
+
+        if (categoryEJB.getSubSubCategoryById(id) == null) {
+            throw new WebApplicationException("Not allowed to create a subsubcategory with PUT, and cannot find subsubcategory" +
+                    "with id: " + id, 404);
+        }
+
+        try {
+            categoryEJB.updateSubSubCategory(id, dto.parentCategoryId, dto.categoryName);
+        } catch (Exception e) {
+            throw WebException.wrapException(e);
+        }
+
+        return Response
+                .status(200)
+                .build();
+    }
+
+    // PATCH
+
+    @Override
+    public Response updateSubSubCategoryName(Long id, String name) {
+        if (id == null) {
+            throw new WebApplicationException("Must provide a valid id", 400);
+        }
+
+        if (categoryEJB.getSubSubCategoryById(id) == null) {
+            throw new WebApplicationException("Cannot find subsubcategory with id " + id, 404);
+        }
+
+        if (Strings.isNullOrEmpty(name)) {
+            throw new WebApplicationException("Category name cannot be empty", 400);
+        }
+
+        try {
+            categoryEJB.updateSubSubCategoryName(id, name);
+        } catch (Exception e) {
+            throw WebException.wrapException(e);
+        }
+
+        return Response
+                .status(200)
                 .build();
     }
 
@@ -103,7 +136,7 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
     @Override
     public void deleteSubSubCategory(@ApiParam("The id of the subsubcategory") Long id) {
         if (id == null) {
-            throw new WebApplicationException("Must provide an id", 400);
+            throw new WebApplicationException("Must provide a valid id", 400);
         }
 
         categoryEJB.deleteSubSubCategory(id);

@@ -27,6 +27,7 @@ public class RestTestBase {
     protected static final String SUBCATEGORY_PATH = "/subcategories";
     protected static final String SUBSUBCATEGORY_PATH = "/subsubcategories";
     protected static final String CATEGORY_WITH_QUIZZES_PATH = "/categories/withQuizzes";
+    protected static final String SUBSUBCATEGORY_WITH_QUIZZES_PATH = CATEGORY_WITH_QUIZZES_PATH + "/subsubcategories";
 
     @BeforeClass
     public static void initClass() {

@@ -1,5 +1,6 @@
 package no.westerdals.pg6100.rest.api.implementation;
 
+import com.google.common.base.Strings;
 import no.westerdals.pg6100.backend.ejb.CategoryEJB;
 import no.westerdals.pg6100.rest.api.CategoryRestApi;
 import no.westerdals.pg6100.rest.api.utils.WebException;
@@ -55,31 +56,6 @@ public class CategoryRest implements CategoryRestApi {
         return SubCategoryConverter.transform(categoryEJB.getSubCategoriesByParentId(id));
     }
 
-    // PUT
-
-    @Override
-    public Response updateCategory(Long id, CategoryDto dto) {
-        if (id == null) {
-            throw new WebApplicationException("Please provide a valid id", 400);
-        }
-        if (id.longValue() != dto.id) {
-            throw new WebApplicationException("Not allowed to change the id of the resource", 409);
-        }
-
-        if (categoryEJB.getCategory(id) == null) {
-            throw new WebApplicationException("Not allowed to create a category with PUT, and cannot find category with id: " + id, 404);
-        }
-
-        try {
-            categoryEJB.updateCategory(id, dto.categoryName);
-        } catch (Exception e) {
-            throw WebException.wrapException(e);
-        }
-
-        return Response.status(200)
-                .build();
-    }
-
     // POST
 
     @Override
@@ -102,12 +78,65 @@ public class CategoryRest implements CategoryRestApi {
                 .build();
     }
 
+    // PUT
+
+    @Override
+    public Response updateCategory(Long id, CategoryDto dto) {
+        if (id == null) {
+            throw new WebApplicationException("Must provide a valid id", 400);
+        }
+        if (id.longValue() != dto.id) {
+            throw new WebApplicationException("Not allowed to change the id of the resource", 409);
+        }
+
+        if (categoryEJB.getCategory(id) == null) {
+            throw new WebApplicationException("Not allowed to create a category with PUT, and cannot find category with id: " + id, 404);
+        }
+
+        try {
+            categoryEJB.updateCategory(id, dto.categoryName);
+        } catch (Exception e) {
+            throw WebException.wrapException(e);
+        }
+
+        return Response
+                .status(200)
+                .build();
+    }
+
+    // PATCH
+
+    @Override
+    public Response updateCategoryName(Long id, String name) {
+        if (id == null) {
+            throw new WebApplicationException("Must provide a valid id", 400);
+        }
+
+        if (categoryEJB.getCategory(id) == null) {
+            throw new WebApplicationException("Cannot find category with id " + id, 404);
+        }
+
+        if (Strings.isNullOrEmpty(name)) {
+            throw new WebApplicationException("Category name cannot be empty", 400);
+        }
+
+        try {
+            categoryEJB.updateCategory(id, name);
+        } catch (Exception e) {
+            throw WebException.wrapException(e);
+        }
+
+        return Response
+                .status(200)
+                .build();
+    }
+
     // DELETE
 
     @Override
     public void deleteCategory(Long id) {
         if (id == null) {
-            throw new WebApplicationException("Must provide an id", 400);
+            throw new WebApplicationException("Must provide a valid id", 400);
         }
 
         categoryEJB.deleteCategory(id);

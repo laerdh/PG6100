@@ -100,7 +100,34 @@ public class CategoryRestIT extends RestTestBase {
     }
 
     @Test
-    public void testCategoriesWithQuizzes() {
+    public void testCreateAndUpdateCategoryName() {
+        String categoryName = "sports";
+        String id = createCategory(categoryName);
+
+        given().pathParam("id", id)
+                .get("/id/{id}")
+                .then()
+                .statusCode(200)
+                .body("categoryName", is(categoryName));
+
+        String newCategoryName = "music";
+
+        given().contentType(ContentType.TEXT)
+                .pathParam("id", id)
+                .body(newCategoryName)
+                .patch("/id/{id}")
+                .then()
+                .statusCode(200);
+
+        given().pathParam("id", id)
+                .get("/id/{id}")
+                .then()
+                .statusCode(200)
+                .body("categoryName", is(newCategoryName));
+    }
+
+    @Test
+    public void testGetCategoriesWithQuizzes() {
         Long cat1 = Long.parseLong(createCategory("sports"));
         Long cat2 = Long.parseLong(createCategory("music"));
 
@@ -118,5 +145,25 @@ public class CategoryRestIT extends RestTestBase {
         RestAssured.basePath = BASE_PATH + CATEGORY_WITH_QUIZZES_PATH;
         get().then().statusCode(200).body("size()", is(1));
         get().then().statusCode(200).body("categoryName", hasItem("sports"));
+    }
+
+    @Test
+    public void testGetSubSubCategoriesWithQuizzes() {
+        Long cat1 = Long.parseLong(createCategory("sports"));
+        Long cat2 = Long.parseLong(createCategory("music"));
+
+        Long subCat1 = Long.parseLong(createSubCategory("football", cat1));
+        Long subCat2 = Long.parseLong(createSubCategory("rock", cat2));
+
+        Long subSubCat1 = Long.parseLong(createSubSubCategory("premier league", subCat1));
+        Long subSubCat2 = Long.parseLong(createSubSubCategory("bands", subCat2));
+
+        QuizDto dto = createQuiz(subSubCat1);
+        RestAssured.basePath = BASE_PATH + QUIZ_PATH;
+        String id = postJson(dto);
+
+        RestAssured.basePath = BASE_PATH + SUBSUBCATEGORY_WITH_QUIZZES_PATH;
+        get().then().statusCode(200).body("size()", is(1));
+        get().then().statusCode(200).body("categoryName", hasItem("premier league"));
     }
 }

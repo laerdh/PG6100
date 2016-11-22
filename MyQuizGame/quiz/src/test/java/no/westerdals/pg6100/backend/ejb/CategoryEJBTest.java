@@ -93,6 +93,20 @@ public class CategoryEJBTest {
     }
 
     @Test
+    public void testUpdateSubCategoryName() throws Exception {
+        String subCategoryName = "football";
+
+        Long id = categoryEJB.createCategory("sports");
+        Long subCategoryId = categoryEJB.createSubCategory(id, subCategoryName);
+
+        assertEquals(subCategoryName, categoryEJB.getSubCategoryById(subCategoryId).getCategoryName());
+
+        String newCategoryName = "basketball";
+        assertTrue(categoryEJB.updateSubCategoryName(subCategoryId, newCategoryName));
+        assertEquals(newCategoryName, categoryEJB.getSubCategoryById(subCategoryId).getCategoryName());
+    }
+
+    @Test
     public void testUpdateSubSubCategory() throws Exception {
         String categoryName = "sports";
         String subCategoryName = "football";
@@ -108,6 +122,22 @@ public class CategoryEJBTest {
         assertTrue(categoryEJB.updateSubSubCategory(subSubCategoryId, subCategoryId, subSubCategoryName));
 
         assertEquals(subSubCategoryName, categoryEJB.getSubSubCategoryById(subSubCategoryId).getCategoryName());
+    }
+
+    @Test
+    public void testUpdateSubSubCategoryName() throws Exception {
+        String subSubCategoryName = "premier league";
+
+        Long categoryId = categoryEJB.createCategory("sports");
+
+        Long subCategoryId = categoryEJB.createSubCategory(categoryId, "football");
+        Long subSubCategoryId = categoryEJB.createSubSubCategory(subCategoryId, subSubCategoryName);
+
+        assertEquals(subSubCategoryName, categoryEJB.getSubSubCategoryById(subSubCategoryId).getCategoryName());
+
+        String newCategoryName = "world cup";
+        assertTrue(categoryEJB.updateSubSubCategoryName(subSubCategoryId, newCategoryName));
+        assertEquals(newCategoryName, categoryEJB.getSubSubCategoryById(subSubCategoryId).getCategoryName());
     }
 
     @Test
