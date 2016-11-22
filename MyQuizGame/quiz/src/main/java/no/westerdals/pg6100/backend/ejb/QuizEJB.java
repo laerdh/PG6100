@@ -56,6 +56,10 @@ public class QuizEJB {
         return (Quiz) query.getSingleResult();
     }
 
+    public boolean isPresent(Long id) {
+        return em.find(Quiz.class, id) != null;
+    }
+
     public List<Quiz> getAllQuizzes() {
         Query query = em.createNamedQuery(Quiz.GET_ALL_QUIZZES);
 

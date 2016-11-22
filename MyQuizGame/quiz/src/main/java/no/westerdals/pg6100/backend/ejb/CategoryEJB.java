@@ -216,18 +216,15 @@ public class CategoryEJB {
         }
     }
 
+    public boolean isCategoryPresent(Long id) {
+        return em.find(Category.class, id) != null;
+    }
+
     public int deleteCategory(Long id) {
         Query query = em.createQuery("delete from Category c where c.id = ?1");
         query.setParameter(1, id);
 
         return query.executeUpdate();
-    }
-
-    public List<SubCategory> getSubCategoriesByParentName(String category) {
-        Query query = em.createNamedQuery(SubCategory.GET_SUBCATEGORIES_BY_PARENT_NAME);
-        query.setParameter(1, formatInput(category));
-
-        return query.getResultList();
     }
 
     public List<SubCategory> getSubCategoriesByParentId(Long categoryId) {
@@ -265,6 +262,10 @@ public class CategoryEJB {
         return query.getResultList();
     }
 
+    public boolean isSubCategoryPresent(Long id) {
+        return em.find(SubCategory.class, id) != null;
+    }
+
     public int deleteSubCategory(Long id) {
         Query query = em.createQuery("delete from SubCategory s where s.id = ?1");
         query.setParameter(1, id);
@@ -272,14 +273,7 @@ public class CategoryEJB {
         return query.executeUpdate();
     }
 
-    public List<SubSubCategory> getSubSubCategoriesByParentName(String subCategory) {
-        Query query = em.createNamedQuery(SubSubCategory.GET_SUBSUBCATEGORIES_BY_PARENT_NAME);
-        query.setParameter(1, formatInput(subCategory));
-
-        return query.getResultList();
-    }
-
-    public List<SubSubCategory> getSubSubCategoriesByParentID(Long id) {
+    public List<SubSubCategory> getSubSubCategoriesByParentId(Long id) {
         Query query = em.createNamedQuery(SubSubCategory.GET_SUBSUBCATEGORIES_BY_PARENT_ID);
         query.setParameter(1, id);
 
@@ -308,6 +302,10 @@ public class CategoryEJB {
         Query query = em.createNamedQuery(SubSubCategory.GET_ALL_SUBSUBCATEGORIES);
 
         return query.getResultList();
+    }
+
+    public boolean isSubSubCategoryPresent(Long id) {
+        return em.find(SubSubCategory.class, id) != null;
     }
 
     public List<Category> getAllCategoriesWithQuizzes() {

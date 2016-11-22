@@ -90,7 +90,7 @@ public class CategoryRest implements CategoryRestApi {
             throw new WebApplicationException("Not allowed to change the id of the resource", 409);
         }
 
-        if (categoryEJB.getCategory(id) == null) {
+        if (!categoryEJB.isCategoryPresent(id)) {
             throw new WebApplicationException("Not allowed to create a category with PUT, and cannot find category with id: " + id, 404);
         }
 
@@ -113,8 +113,8 @@ public class CategoryRest implements CategoryRestApi {
             throw new WebApplicationException("Must provide a valid id", 400);
         }
 
-        if (categoryEJB.getCategory(id) == null) {
-            throw new WebApplicationException("Cannot find category with id " + id, 404);
+        if (!categoryEJB.isCategoryPresent(id)) {
+            throw new WebApplicationException("Cannot find category with id: " + id, 404);
         }
 
         if (Strings.isNullOrEmpty(name)) {
@@ -138,6 +138,10 @@ public class CategoryRest implements CategoryRestApi {
     public void deleteCategory(Long id) {
         if (id == null) {
             throw new WebApplicationException("Must provide a valid id", 400);
+        }
+
+        if (!categoryEJB.isCategoryPresent(id)) {
+            throw new WebApplicationException("Cannot find category with id: " + id, 404);
         }
 
         categoryEJB.deleteCategory(id);

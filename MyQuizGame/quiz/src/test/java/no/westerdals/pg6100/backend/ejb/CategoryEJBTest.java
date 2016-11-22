@@ -56,6 +56,15 @@ public class CategoryEJBTest {
     }
 
     @Test
+    public void testIsCategoryPresent() throws Exception {
+        Long id = categoryEJB.createCategory("Sports");
+
+        assertTrue(categoryEJB.isCategoryPresent(id));
+        assertEquals(1, categoryEJB.deleteCategory(id));
+        assertFalse(categoryEJB.isCategoryPresent(id));
+    }
+
+    @Test
     public void testAddCategoryWithNullShouldFail() throws Exception {
         assertNull(categoryEJB.createCategory(null));
     }
@@ -158,12 +167,22 @@ public class CategoryEJBTest {
         String subCategory = "Football";
 
         Long id = categoryEJB.createCategory(category);
-        int expected = categoryEJB.getSubCategoriesByParentName(category).size();
+        int expected = categoryEJB.getSubCategoriesByParentId(id).size();
 
         assertNotNull(categoryEJB.createSubCategory(id, subCategory));
-        int actual = categoryEJB.getSubCategoriesByParentName(category).size();
+        int actual = categoryEJB.getSubCategoriesByParentId(id).size();
 
         assertEquals(expected + 1, actual);
+    }
+
+    @Test
+    public void testSubCategoryIsPresent() throws Exception {
+        Long id = categoryEJB.createCategory("Sports");
+        Long subCategoryId = categoryEJB.createSubCategory(id, "Football");
+
+        assertTrue(categoryEJB.isSubCategoryPresent(subCategoryId));
+        assertEquals(1, categoryEJB.deleteSubCategory(subCategoryId));
+        assertFalse(categoryEJB.isSubCategoryPresent(subCategoryId));
     }
 
     @Test
@@ -193,9 +212,9 @@ public class CategoryEJBTest {
         Long id = categoryEJB.createCategory(category);
         Long subCategoryId = categoryEJB.createSubCategory(id, subCategory);
 
-        int expected = categoryEJB.getSubCategoriesByParentName(category).size();
+        int expected = categoryEJB.getSubCategoriesByParentId(id).size();
         assertEquals(1, categoryEJB.deleteSubCategory(subCategoryId));
-        int actual = categoryEJB.getSubSubCategoriesByParentName(category).size();
+        int actual = categoryEJB.getSubSubCategoriesByParentId(id).size();
 
         assertEquals(expected - 1, actual);
     }
@@ -229,6 +248,17 @@ public class CategoryEJBTest {
         int actual = categoryEJB.getAllSubSubCategories().size();
 
         assertEquals(expected + 1, actual);
+    }
+
+    @Test
+    public void testSubSubCategoryIsPresent() throws Exception {
+        Long id = categoryEJB.createCategory("Sports");
+        Long subCategoryId = categoryEJB.createSubCategory(id, "Football");
+        Long subSubCategoryId = categoryEJB.createSubSubCategory(subCategoryId, "Premier League");
+
+        assertTrue(categoryEJB.isSubSubCategoryPresent(subSubCategoryId));
+        assertEquals(1, categoryEJB.deleteSubSubCategory(subSubCategoryId));
+        assertFalse(categoryEJB.isSubSubCategoryPresent(subSubCategoryId));
     }
 
     @Test
@@ -277,7 +307,7 @@ public class CategoryEJBTest {
 
     @Test
     public void testGetSubSubCategory() throws Exception {
-        int expected = categoryEJB.getSubSubCategoriesByParentName("Football").size();
+        int expected = categoryEJB.getAllSubSubCategories().size();
 
         Long id = categoryEJB.createCategory("Sports");
         Long subCategoryId = categoryEJB.createSubCategory(id, "Football");
@@ -285,7 +315,7 @@ public class CategoryEJBTest {
         categoryEJB.createSubSubCategory(subCategoryId, "Premier League");
         categoryEJB.createSubSubCategory(subCategoryId, "Champions League");
 
-        int actual = categoryEJB.getSubSubCategoriesByParentName("Football").size();
+        int actual = categoryEJB.getSubSubCategoriesByParentId(subCategoryId).size();
 
         assertEquals(expected + 2, actual);
     }
@@ -336,9 +366,9 @@ public class CategoryEJBTest {
         Long subCategoryId = categoryEJB.createSubCategory(id, subCategory);
         Long subSubCategoryId = categoryEJB.createSubSubCategory(subCategoryId, subSubCategory);
 
-        int expected = categoryEJB.getSubSubCategoriesByParentName(subCategory).size();
+        int expected = categoryEJB.getSubSubCategoriesByParentId(subCategoryId).size();
         assertEquals(1, categoryEJB.deleteSubSubCategory(subSubCategoryId));
-        int actual = categoryEJB.getSubSubCategoriesByParentName(subCategory).size();
+        int actual = categoryEJB.getSubSubCategoriesByParentId(subCategoryId).size();
 
         assertEquals(expected - 1, actual);
     }

@@ -123,6 +123,15 @@ public class QuizEJBTest {
         assertEquals(expected - 1, actual);
     }
 
+    @Test
+    public void testIsQuizPresent() throws Exception {
+        Long id = createQuizQuestion();
+
+        assertTrue(quizEJB.isPresent(id));
+        assertEquals(1, quizEJB.deleteQuiz(id));
+        assertFalse(quizEJB.isPresent(id));
+    }
+
     public Long createCategories(String category, String subCategory, String subSubCategory) throws Exception {
         Long id = categoryEJB.createCategory(category);
         Long subCategoryId = categoryEJB.createSubCategory(id, subCategory);

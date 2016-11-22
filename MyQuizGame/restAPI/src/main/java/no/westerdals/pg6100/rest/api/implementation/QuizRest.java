@@ -2,6 +2,7 @@ package no.westerdals.pg6100.rest.api.implementation;
 
 import com.google.common.base.Strings;
 import io.swagger.annotations.ApiParam;
+import no.westerdals.pg6100.backend.ejb.CategoryEJB;
 import no.westerdals.pg6100.backend.ejb.QuizEJB;
 import no.westerdals.pg6100.backend.entity.Quiz;
 import no.westerdals.pg6100.rest.api.QuizRestApi;
@@ -27,6 +28,9 @@ public class QuizRest implements QuizRestApi {
     @EJB
     private QuizEJB quizEJB;
 
+    @EJB
+    private CategoryEJB categoryEJB;
+
     // GET
 
     @Override
@@ -47,13 +51,16 @@ public class QuizRest implements QuizRestApi {
             throw new WebApplicationException("Cannot specify id for a newly created quiz", 400);
         }
 
-        if (!isValid(dto.question)) {
-            throw new WebApplicationException("Must provide a valid question", 400);
-        }
-
-
         if (dto.parentCategoryId == null) {
             throw new WebApplicationException("Must provide an id to parent category", 400);
+        }
+
+        if (!categoryEJB.isSubSubCategoryPresent(dto.parentCategoryId)) {
+            throw new WebApplicationException("Cannot find subsubcategory with id: " + dto.parentCategoryId, 404);
+        }
+
+        if (Strings.isNullOrEmpty(dto.question)) {
+            throw new WebApplicationException("Must provide a valid question", 400);
         }
 
         Long id;
@@ -61,10 +68,6 @@ public class QuizRest implements QuizRestApi {
             id = quizEJB.createQuiz(dto.parentCategoryId, dto.question, dto.answers, dto.correctAnswer);
         } catch (Exception e) {
             throw WebException.wrapException(e);
-        }
-
-        if (id == null) {
-            throw new WebApplicationException("Cannot find parent category with id " + dto.id, 404);
         }
 
         return Response
@@ -86,7 +89,7 @@ public class QuizRest implements QuizRestApi {
             throw new WebApplicationException("Not allowed to change the id of the resource", 409);
         }
 
-        if (quizEJB.getQuiz(id) == null) {
+        if (!quizEJB.isPresent(id)) {
             throw new WebApplicationException("Not allowed to create a quiz with PUT, and cannot find quiz with id: " +
                     id, 404);
         }
@@ -108,6 +111,10 @@ public class QuizRest implements QuizRestApi {
     public Response updateQuizQuestion(Long id, String question) {
         if (id == null) {
             throw new WebApplicationException("Must provide a valid id", 400);
+        }
+
+        if (!quizEJB.isPresent(id)) {
+            throw new WebApplicationException("Cannot find quiz with id: " + id, 404);
         }
 
         if (Strings.isNullOrEmpty(question)) {
@@ -134,6 +141,10 @@ public class QuizRest implements QuizRestApi {
     public void deleteQuiz(Long id) {
         if (id == null) {
             throw new WebApplicationException("Must provide a valid id", 400);
+        }
+
+        if (!quizEJB.isPresent(id)) {
+            throw new WebApplicationException("Cannot find quiz with id: " + id, 404);
         }
 
         quizEJB.deleteQuiz(id);
@@ -171,14 +182,5 @@ public class QuizRest implements QuizRestApi {
                 .status(301)
                 .location(URI.create(QUIZ_PATH + "/" + id))
                 .build();
-    }
-
-    private boolean isValid(String... input) {
-        for (String s : input) {
-            if (s == null || s.isEmpty()) {
-                return false;
-            }
-        }
-        return true;
     }
 }

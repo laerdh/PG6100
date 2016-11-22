@@ -50,7 +50,11 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
             throw new WebApplicationException("Must specify parent category id", 400);
         }
 
-        if (dto.categoryName == null ||dto.categoryName.isEmpty()) {
+        if (!categoryEJB.isSubCategoryPresent(dto.parentCategoryId)) {
+            throw new WebApplicationException("Cannot find parent category with id: " + dto.parentCategoryId, 404);
+        }
+
+        if (Strings.isNullOrEmpty(dto.categoryName)) {
             throw new WebApplicationException("Must specify a category name", 400);
         }
 
@@ -59,10 +63,6 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
             id = categoryEJB.createSubSubCategory(dto.parentCategoryId, dto.categoryName);
         } catch (Exception e) {
             throw WebException.wrapException(e);
-        }
-
-        if (id == null) {
-            throw new WebApplicationException("Cannot find parent category with id " + dto.id, 404);
         }
 
         return Response.status(201)
@@ -83,7 +83,7 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
             throw new WebApplicationException("Not allowed to change the id of the resource", 409);
         }
 
-        if (categoryEJB.getSubSubCategoryById(id) == null) {
+        if (!categoryEJB.isSubSubCategoryPresent(id)) {
             throw new WebApplicationException("Not allowed to create a subsubcategory with PUT, and cannot find subsubcategory" +
                     "with id: " + id, 404);
         }
@@ -107,8 +107,8 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
             throw new WebApplicationException("Must provide a valid id", 400);
         }
 
-        if (categoryEJB.getSubSubCategoryById(id) == null) {
-            throw new WebApplicationException("Cannot find subsubcategory with id " + id, 404);
+        if (!categoryEJB.isSubSubCategoryPresent(id)) {
+            throw new WebApplicationException("Cannot find subsubcategory with id: " + id, 404);
         }
 
         if (Strings.isNullOrEmpty(name)) {
@@ -132,6 +132,10 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
     public void deleteSubSubCategory(Long id) {
         if (id == null) {
             throw new WebApplicationException("Must provide a valid id", 400);
+        }
+
+        if (!categoryEJB.isSubSubCategoryPresent(id)) {
+            throw new WebApplicationException("Cannot find subsubcategory with id: " + id, 404);
         }
 
         categoryEJB.deleteSubSubCategory(id);
