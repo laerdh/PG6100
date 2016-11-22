@@ -169,7 +169,7 @@ public class CategoryRestIT extends RestTestBase {
     }
 
     @Test
-    public void testGetCategoryDeprecatedURI() {
+    public void testGetCategoryByDeprecatedURI() {
         String categoryName = "sports";
         Long id = Long.parseLong(createCategory(categoryName));
 
@@ -178,5 +178,92 @@ public class CategoryRestIT extends RestTestBase {
                 .then()
                 .statusCode(200)
                 .body("categoryName", is(categoryName));
+    }
+
+    @Test
+    public void testDeleteCategoryByDeprecatedURI() {
+        String categoryName = "sports";
+        Long id = Long.parseLong(createCategory(categoryName));
+
+        get().then().statusCode(200).body("size()", is(1));
+
+        String location = given().pathParam("id", id)
+                .delete("/id/{id}")
+                .then()
+                .statusCode(301)
+                .extract()
+                .header("Location");
+
+        delete(location).then().statusCode(204);
+
+        get().then().statusCode(200).body("size()", is(0));
+    }
+
+    @Test
+    public void testUpdateCategoryByDeprecatedURI() {
+        String categoryName = "sports";
+        Long id = Long.parseLong(createCategory(categoryName));
+
+        get().then().statusCode(200).body("size()", is(1));
+
+        // Update
+        String newCategoryName = "music";
+        CategoryDto dto = new CategoryDto(id, newCategoryName);
+
+        String location = given()
+                .contentType(ContentType.JSON)
+                .pathParam("id", id)
+                .body(dto)
+                .put("/id/{id}")
+                .then()
+                .statusCode(301)
+                .extract()
+                .header("Location");
+
+        given().contentType(ContentType.JSON)
+                .body(dto)
+                .put(location)
+                .then()
+                .statusCode(200);
+
+        // Check that categoryname is updated
+        given().pathParam("id", id)
+                .get("/{id}")
+                .then()
+                .statusCode(200)
+                .body("categoryName", is(newCategoryName));
+    }
+
+    @Test
+    public void testUpdateCategoryNameByDeprecatedURI() {
+        String categoryName = "sports";
+        Long id = Long.parseLong(createCategory(categoryName));
+
+        get().then().statusCode(200).body("size()", is(1));
+
+        // Update
+        String newCategoryName = "music";
+
+        String location = given().contentType(ContentType.TEXT)
+                .pathParam("id", id)
+                .body(newCategoryName)
+                .patch("/id/{id}")
+                .then()
+                .statusCode(301)
+                .extract()
+                .header("Location");
+
+        given().contentType(ContentType.TEXT)
+                .body(newCategoryName)
+                .patch(location)
+                .then()
+                .statusCode(200);
+
+        // Check that categoryname is updated
+        given().pathParam("id", id)
+                .get("/{id}")
+                .then()
+                .statusCode(200)
+                .body("categoryName", is(newCategoryName));
     }
 }
