@@ -67,7 +67,7 @@ public class SubSubCategoryRest implements SubSubCategoryRestApi {
         }
 
         if (id == null) {
-            throw new WebApplicationException("The parent category does not exist", 400);
+            throw new WebApplicationException("Cannot find parent category with id " + dto.id, 404);
         }
 
         return Response.status(201)

@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.jaxrs.PATCH;
+import no.westerdals.pg6100.rest.api.utils.Formats;
 import no.westerdals.pg6100.rest.dto.SubCategoryDto;
 import no.westerdals.pg6100.rest.dto.SubSubCategoryDto;
 
@@ -16,7 +17,10 @@ import java.util.List;
 
 @Api(value = "/subcategories", description = "API for Quiz Subcategories")
 @Path("/subcategories")
-@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+@Produces({
+        Formats.BASE_JSON,
+        Formats.V1_JSON
+})
 public interface SubCategoryRestApi {
 
     // GET
@@ -59,7 +63,8 @@ public interface SubCategoryRestApi {
 
     @ApiOperation("Create a subcategory")
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes({Formats.BASE_JSON, Formats.V1_JSON})
+    @Produces(Formats.BASE_JSON)
     @ApiResponse(code = 201, message = "The id of the newly created subcategory")
     Response createSubCategory(
             @ApiParam("Category id, name and id. Should not specify id at time of creation")
@@ -71,7 +76,7 @@ public interface SubCategoryRestApi {
     @ApiOperation("Update an existing subcategory")
     @Path("/id/{id}")
     @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes({Formats.BASE_JSON, Formats.V1_JSON})
     Response updateSubCategory(
             @ApiParam("The id of the subcategory to be updated")
             @PathParam("id")

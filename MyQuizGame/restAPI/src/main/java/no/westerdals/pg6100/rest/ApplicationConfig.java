@@ -21,7 +21,7 @@ public class ApplicationConfig extends Application {
 
         // Configure Swagger to create API documentation
         BeanConfig beanConfig = new BeanConfig();
-        beanConfig.setVersion("0.0.1");
+        beanConfig.setVersion("0.2.0");
         beanConfig.setSchemes(new String[]{"http"});
         beanConfig.setHost("localhost:8080");
         beanConfig.setBasePath("/myquizgame/api");

@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.jaxrs.PATCH;
+import no.westerdals.pg6100.rest.api.utils.Formats;
 import no.westerdals.pg6100.rest.dto.CategoryDto;
 import no.westerdals.pg6100.rest.dto.SubCategoryDto;
 import no.westerdals.pg6100.rest.dto.SubSubCategoryDto;
@@ -17,7 +18,10 @@ import java.util.List;
 
 @Api(value = "/categories", description = "API for Quiz Categories")
 @Path("/categories")
-@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+@Produces({
+        Formats.BASE_JSON,
+        Formats.V1_JSON
+})
 public interface CategoryRestApi {
 
     // GET
@@ -59,30 +63,32 @@ public interface CategoryRestApi {
     @GET
     List<SubSubCategoryDto> getSubSubCategoriesWithQuizzes();
 
+    // POST
+
+    @ApiOperation("Create a category")
+    @POST
+    @Consumes({Formats.BASE_JSON, Formats.V1_JSON})
+    @Produces(Formats.BASE_JSON)
+    @ApiResponse(code = 201, message = "The id of the newly created category")
+    Response createCategory(
+            @ApiParam("The name of the category and id. Should not specify id at the time of creation")
+            CategoryDto dto
+    );
+
     // PUT
 
     @ApiOperation("Update an existing category")
     @Path("/id/{id}")
     @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes({Formats.BASE_JSON, Formats.V1_JSON})
     Response updateCategory(
             @ApiParam("The id of the category")
             @PathParam("id")
-            Long id,
+                    Long id,
 
             @ApiParam("The category that will replace the old one. Id cannot be changed.")
-            CategoryDto dto
+                    CategoryDto dto
     );
-
-    // POST
-
-    @ApiOperation("Create a category")
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @ApiResponse(code = 201, message = "The id of the newly created category")
-    Response createCategory(
-            @ApiParam("The name of the category and id. Should not specify id at the time of creation")
-            CategoryDto dto);
 
     // PATCH
 

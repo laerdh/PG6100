@@ -64,6 +64,10 @@ public class QuizRest implements QuizRestApi {
             throw WebException.wrapException(e);
         }
 
+        if (id == null) {
+            throw new WebApplicationException("Cannot find parent category with id " + dto.id, 404);
+        }
+
         return Response
                 .status(201)
                 .entity(id)

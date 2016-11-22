@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.jaxrs.PATCH;
+import no.westerdals.pg6100.rest.api.utils.Formats;
 import no.westerdals.pg6100.rest.dto.QuizDto;
 
 import javax.ws.rs.*;
@@ -14,7 +15,10 @@ import java.util.List;
 
 @Api(value = "/quizzes", description = "API for Quizzes")
 @Path("/quizzes")
-@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+@Produces({
+        Formats.BASE_JSON,
+        Formats.V1_JSON
+})
 public interface QuizRestApi {
 
     // GET
@@ -37,7 +41,8 @@ public interface QuizRestApi {
 
     @ApiOperation("Create a quiz")
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes({Formats.BASE_JSON, Formats.V1_JSON})
+    @Produces(Formats.BASE_JSON)
     @ApiResponse(code = 201, message = "The id of the newly created quiz")
     Response createQuiz(
             @ApiParam("Quiz id, question, answers and the id of the correct answer. Should not specify" +
@@ -50,7 +55,7 @@ public interface QuizRestApi {
     @ApiOperation("Update a quiz")
     @Path("/id/{id}")
     @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes({Formats.BASE_JSON, Formats.V1_JSON})
     Response updateQuiz(
             @ApiParam("The id of the quiz to be updated")
             @PathParam("id")
