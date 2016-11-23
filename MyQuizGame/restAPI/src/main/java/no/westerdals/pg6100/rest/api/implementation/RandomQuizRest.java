@@ -54,14 +54,17 @@ public class RandomQuizRest implements RandomQuizRestApi {
             } else {
                 return Response.status(404).build();
             }
+
+            if (filtered.size() < 1) {
+                return Response.status(404).build();
+            }
             id = filtered.get(getRandom(filtered.size())).getId();
+
         } else {
             id = all.get(getRandom(all.size())).getId();
         }
-
-        if (filtered.size() < 1) {
-            return Response.status(404).build();
-        }
+        
+        System.out.println("\n\nTHE ID IS: " + id + "\n\n");
 
         return Response
                 .status(307)
@@ -76,6 +79,6 @@ public class RandomQuizRest implements RandomQuizRestApi {
     }
 
     private int getRandom(int limit) {
-        return (int)(Math.random() * (limit+1));
+        return (int)(Math.random() * limit);
     }
 }
