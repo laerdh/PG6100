@@ -34,6 +34,7 @@ public class ApplicationConfig extends Application {
         c.add(SubSubCategoryRest.class);
         c.add(QuizRest.class);
         c.add(RandomQuizRest.class);
+        c.add(RandomQuizzesRest.class);
 
         // Add further configuration to activate Swagger
         c.add(io.swagger.jaxrs.listing.ApiListingResource.class);

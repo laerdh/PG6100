@@ -6,10 +6,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import no.westerdals.pg6100.rest.api.utils.Formats;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 @Api(value = "/randomQuiz", description = "API for getting random quiz")
@@ -20,12 +17,12 @@ import javax.ws.rs.core.Response;
 })
 public interface RandomQuizRestApi {
 
-    @ApiOperation("Get random quizzes. Can specify a category, subcategory or subsubcategory with optional filter")
+    @ApiOperation("Get random quizzes based on optional filter")
     @ApiResponse(code = 307, message = "Temporary redirects to /quizzes/{id}")
     @GET
     Response getRandomQuiz(
-            @ApiParam("Specify an id for category, subcategory og subsubcategory")
+            @ApiParam("Specify an id for category, subcategory or subsubcategory")
             @QueryParam("filter")
-            Long n
+            Long id
     );
 }
