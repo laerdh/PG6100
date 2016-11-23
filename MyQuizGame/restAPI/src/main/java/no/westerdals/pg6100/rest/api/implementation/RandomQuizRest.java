@@ -35,7 +35,7 @@ public class RandomQuizRest implements RandomQuizRestApi {
     public Response getRandomQuiz(Long n) {
 
         List<Quiz> all = quizEJB.getAllQuizzes();
-        List<Quiz> filtered = new ArrayList<>();
+        List<Quiz> filtered;
         Long id;
 
         if (all == null || all.size() < 1) {
@@ -63,8 +63,6 @@ public class RandomQuizRest implements RandomQuizRestApi {
         } else {
             id = all.get(getRandom(all.size())).getId();
         }
-        
-        System.out.println("\n\nTHE ID IS: " + id + "\n\n");
 
         return Response
                 .status(307)
