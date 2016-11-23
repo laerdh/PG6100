@@ -1,10 +1,7 @@
 package no.westerdals.pg6100.rest;
 
 import io.swagger.jaxrs.config.BeanConfig;
-import no.westerdals.pg6100.rest.api.implementation.CategoryRest;
-import no.westerdals.pg6100.rest.api.implementation.QuizRest;
-import no.westerdals.pg6100.rest.api.implementation.SubCategoryRest;
-import no.westerdals.pg6100.rest.api.implementation.SubSubCategoryRest;
+import no.westerdals.pg6100.rest.api.implementation.*;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -36,6 +33,7 @@ public class ApplicationConfig extends Application {
         c.add(SubCategoryRest.class);
         c.add(SubSubCategoryRest.class);
         c.add(QuizRest.class);
+        c.add(RandomQuizRest.class);
 
         // Add further configuration to activate Swagger
         c.add(io.swagger.jaxrs.listing.ApiListingResource.class);
