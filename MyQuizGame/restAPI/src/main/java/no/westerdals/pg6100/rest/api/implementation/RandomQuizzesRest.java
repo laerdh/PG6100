@@ -31,7 +31,7 @@ public class RandomQuizzesRest implements RandomQuizzesRestApi{
         List<Quiz> filtered = new ArrayList<>();
         List<Long> quizIds;
 
-        if (all == null || all.isEmpty()) {
+        if (all == null || all.size() < n) {
             return Response.status(404).build();
         }
 
@@ -57,9 +57,6 @@ public class RandomQuizzesRest implements RandomQuizzesRestApi{
 
             quizIds = generateRandomList(filtered, n);
         } else {
-            if (all.size() < n) {
-                return Response.status(404).build();
-            }
             quizIds = generateRandomList(all, n);
         }
 
