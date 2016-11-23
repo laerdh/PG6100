@@ -35,32 +35,33 @@ public class RandomQuizRest implements RandomQuizRestApi {
     public Response getRandomQuiz(Long n) {
 
         List<Quiz> all = quizEJB.getAllQuizzes();
-        Optional<Quiz> selected = Optional.empty();
+        List<Quiz> filtered = new ArrayList<>();
+        Long id;
 
         if (all == null || all.size() < 1) {
-            return Response
-                    .status(404)
-                    .build();
+            return Response.status(404).build();
         }
 
         if (n != null) {
             if (categoryEJB.isCategoryPresent(n)) {
-                selected = filterQuizzes(all, q -> q.getParentSubSubCategory().getParentSubCategory()
+                filtered = filterQuizzes(all, q -> q.getParentSubSubCategory().getParentSubCategory()
                         .getParentCategory().getId().equals(n));
             } else if (categoryEJB.isSubCategoryPresent(n)) {
-                selected = filterQuizzes(all, q -> q.getParentSubSubCategory().getParentSubCategory()
+                filtered = filterQuizzes(all, q -> q.getParentSubSubCategory().getParentSubCategory()
                         .getId().equals(n));
             } else if (categoryEJB.isSubSubCategoryPresent(n)) {
-                selected = filterQuizzes(all, q -> q.getParentSubSubCategory().getId().equals(n));
+                filtered = filterQuizzes(all, q -> q.getParentSubSubCategory().getId().equals(n));
             } else {
                 return Response.status(404).build();
             }
+            id = filtered.get(getRandom(filtered.size())).getId();
+        } else {
+            id = all.get(getRandom(all.size())).getId();
         }
 
-        if (!selected.isPresent()) {
-            selected = Optional.of(all.get(getRandom(all.size())));
+        if (filtered.size() < 1) {
+            return Response.status(404).build();
         }
-        Long id = selected.get().getId();
 
         return Response
                 .status(307)
@@ -68,10 +69,10 @@ public class RandomQuizRest implements RandomQuizRestApi {
                 .build();
     }
 
-    private Optional<Quiz> filterQuizzes(List<Quiz> list, Predicate<? super Quiz> predicate) {
+    private List<Quiz> filterQuizzes(List<Quiz> list, Predicate<? super Quiz> predicate) {
         return list.stream()
-                .findFirst()
-                .filter(predicate);
+                .filter(predicate)
+                .collect(Collectors.toList());
     }
 
     private int getRandom(int limit) {
