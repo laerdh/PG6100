@@ -12,8 +12,9 @@
 
     <modules>
         <module>quiz</module>
-        <module>restAPI</module>
+        <module>QuizAPI</module>
         <module>report</module>
+        <module>GameAPI</module>
     </modules>
 
     <properties>
@@ -26,10 +27,22 @@
         <fs>${file.separator}</fs>
         <swagger-version>1.5.10</swagger-version>
         <jackson-version>2.7.4</jackson-version>
+        <dropwizard.version>1.0.3</dropwizard.version>
+        <hystrix-version>1.5.8</hystrix-version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- Internal modules used by other modules -->
+            <dependency>
+                <groupId>no.westerdals.pg6100</groupId>
+                <artifactId>backend</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+            <!-- JEE -->
             <dependency>
                 <groupId>javax</groupId>
                 <artifactId>javaee-api</artifactId>
@@ -50,6 +63,7 @@
                 <version>3.0.0</version>
                 <scope>provided</scope>
             </dependency>
+
 
             <!-- JPA / Hibernate / Database -->
             <dependency>
@@ -77,6 +91,7 @@
                 <scope>provided</scope>
             </dependency>
 
+
             <!-- test -->
             <dependency>
                 <groupId>junit</groupId>
@@ -96,6 +111,7 @@
                 <version>2.2.1</version>
                 <scope>test</scope>
             </dependency>
+
 
             <!-- Arquilian, needed for integration testing of EJB -->
             <dependency>
@@ -139,6 +155,7 @@
                 <scope>test</scope>
             </dependency>
 
+
             <!-- Misc -->
             <dependency>
                 <groupId>io.rest-assured</groupId>
@@ -169,6 +186,29 @@
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson-version}</version>
                 <scope>provided</scope>
+            </dependency>
+
+
+            <!-- Dropwizard -->
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-core</artifactId>
+                <version>${dropwizard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-testing</artifactId>
+                <version>${dropwizard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-assets</artifactId>
+                <version>${dropwizard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-jdbi</artifactId>
+                <version>1.0.5</version>
             </dependency>
 
 
@@ -203,6 +243,12 @@
                 <artifactId>guava</artifactId>
                 <version>19.0</version>
             </dependency>
+            <dependency>
+                <groupId>com.netflix.hystrix</groupId>
+                <artifactId>hystrix-core</artifactId>
+                <version>${hystrix-version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -423,6 +469,27 @@
                         </execution>
                     </executions>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.jvnet.jax-ws-commons</groupId>
+                    <artifactId>jaxws-maven-plugin</artifactId>
+                    <version>2.3.1-b20150201.1248</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>2.4.3</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
             </plugins>
         </pluginManagement>
     </build>

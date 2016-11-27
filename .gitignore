@@ -2,6 +2,8 @@
 *.class
 *.DS_Store
 .DS_Store
-MyQuizGame/quiz/target/
-MyQuizGame/restAPI/target/
+MyQuizGame/quiz/target
+MyQuizGame/restAPI/target
+MyQuizGame/GameAPI/target
+MyQuizGame/QuizAPI/target
 MyQuizGame/report/target
