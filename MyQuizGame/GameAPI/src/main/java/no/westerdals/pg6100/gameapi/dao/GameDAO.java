@@ -8,7 +8,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import java.util.List;
 
 @RegisterMapper(GameMapper.class)
-public interface GameDAO {
+public interface GameDao {
 
     @SqlQuery("select * from GAME limit :limit")
     List<Game> getAll(@Bind("limit") Integer limit);
@@ -17,7 +17,7 @@ public interface GameDAO {
     Game findById(@Bind("id") Long id);
 
     @SqlUpdate("insert into GAME (quizzes, answered, totalQuizzes) values (:quizzes, :answered, :totalQuizzes)")
-    int insert(@Bind("quizzes") Integer quizzes,
+    int insert(@Bind("quizzes") String quizzes,
                @Bind("answered") Integer answered,
                @Bind("totalQuizzes") Integer totalQuizzes);
 }

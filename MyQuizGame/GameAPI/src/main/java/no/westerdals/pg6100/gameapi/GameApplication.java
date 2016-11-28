@@ -7,7 +7,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
-import no.westerdals.pg6100.gameapi.dao.GameDAO;
+import no.westerdals.pg6100.gameapi.dao.GameDao;
 import no.westerdals.pg6100.gameapi.resources.GameRest;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -50,8 +50,8 @@ public class GameApplication extends Application<GameConfiguration> {
         // Init H2 testdata
         createTestData(jdbi);
 
-        final GameDAO gameDAO = jdbi.onDemand(GameDAO.class);
-        final GameRest gameResource = new GameRest(gameDAO);
+        final GameDao gameDao = jdbi.onDemand(GameDao.class);
+        final GameRest gameResource = new GameRest(gameDao);
 
         environment.jersey().setUrlPattern("/game/api/*");
 
@@ -76,31 +76,11 @@ public class GameApplication extends Application<GameConfiguration> {
                     "CREATE TABLE GAME" +
                     "(" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
-                    "quizzes INT," +
+                    "quizzes VARCHAR(128)," +
                     "answered INT," +
                     "totalQuizzes INT" +
                     ");").invoke();
 
-            handle.createStatement("" +
-                    "INSERT INTO GAME (quizzes, answered, totalQuizzes)" +
-                    "VALUES (?, ?, ?)")
-                    .bind(0, 5)
-                    .bind(1, 2)
-                    .bind(2, 5).execute();
-
-            handle.createStatement("" +
-                    "INSERT INTO GAME (quizzes, answered, totalQuizzes)" +
-                    "VALUES (?, ?, ?)")
-                    .bind(0, 3)
-                    .bind(1, 0)
-                    .bind(2, 7).execute();
-
-            handle.createStatement("" +
-                    "INSERT INTO GAME (quizzes, answered, totalQuizzes)" +
-                    "VALUES (?, ?, ?)")
-                    .bind(0, 4)
-                    .bind(1, 2)
-                    .bind(2, 5).execute();
         }
     }
 }

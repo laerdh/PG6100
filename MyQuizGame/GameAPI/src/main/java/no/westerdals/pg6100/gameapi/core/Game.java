@@ -3,9 +3,7 @@ package no.westerdals.pg6100.gameapi.core;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
-
 
 public class Game {
 
@@ -14,7 +12,7 @@ public class Game {
     private Long id;
 
     @JsonProperty
-    private Integer quizzes;
+    private List<Long> quizzes;
 
     @NotNull
     @JsonProperty
@@ -29,7 +27,7 @@ public class Game {
         // Jackson deserialization
     }
 
-    public Game(Long id, Integer quizzes, Integer answered, Integer totalQuizzes) {
+    public Game(Long id, List<Long> quizzes, Integer answered, Integer totalQuizzes) {
         this.id = id;
         this.quizzes = quizzes;
         this.answered = answered;
@@ -41,11 +39,9 @@ public class Game {
 
     public Long getId() { return id; }
 
-    public void setQuizzes(Integer quizzes) { this.quizzes = quizzes; }
+    public void setQuizzes(List<Long> quizzes) { this.quizzes = quizzes; }
 
-    public Integer getQuizzes() {
-        return quizzes;
-    }
+    public List<Long> getQuizzes() { return quizzes; }
 
     public void setAnswered(Integer answered) { this.answered = answered; }
 

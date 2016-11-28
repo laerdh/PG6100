@@ -1,16 +1,15 @@
 package no.westerdals.pg6100.gameapi.resources;
 
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import no.westerdals.pg6100.gameapi.core.Game;
-import no.westerdals.pg6100.gameapi.dao.GameDAO;
+import no.westerdals.pg6100.gameapi.dao.GameDao;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Api(value = "/games", description = "API for Quiz Games")
@@ -19,10 +18,10 @@ import java.util.List;
 @Produces({MediaType.APPLICATION_JSON})
 public class GameRest {
 
-    private GameDAO gameDao;
+    private GameDao gameDao;
 
 
-    public GameRest(GameDAO gameDao) {
+    public GameRest(GameDao gameDao) {
         this.gameDao = gameDao;
     }
 
@@ -32,7 +31,7 @@ public class GameRest {
     public List<Game> getAll(@DefaultValue("5")
                              @ApiParam("Number of quizzes in game")
                              @QueryParam("n")
-                             Integer n) {
+                                     Integer n) {
         return gameDao.getAll(n);
     }
 
@@ -42,7 +41,7 @@ public class GameRest {
     @Path("/{id}")
     public Game findById(@ApiParam("The id of game")
                          @PathParam("id")
-                         Long id) {
+                                 Long id) {
         return gameDao.findById(id);
     }
 
@@ -50,8 +49,8 @@ public class GameRest {
     @ApiOperation("Add a game")
     @POST
     public Response addGame(
-            @ApiParam("Body with uizzes, answered quizzes and total quizzes")
-            Game game) {
+            @ApiParam("Body with quizzes, answered quizzes and total quizzes")
+                    Game game) {
         if (game.getQuizzes() == null) {
             throw new WebApplicationException("Must provide quizzes", 400);
         }
@@ -60,9 +59,12 @@ public class GameRest {
             game.setAnswered(0);
         }
 
+        // Hack: Save list of quizzes as JSON String
+        Gson gson = new Gson();
+        String quizzes = "{ \"quizzes\" : " + gson.toJson(game.getQuizzes()) + " }";
 
         try {
-            gameDao.insert(game.getQuizzes(), game.getAnswered(), game.getTotalQuizzes());
+            gameDao.insert(quizzes, game.getAnswered(), game.getQuizzes().size());
         } catch (Exception e) {
             throw new WebApplicationException(e.getMessage(), 500);
         }
