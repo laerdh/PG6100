@@ -6,22 +6,10 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 
 @ApiModel("A quiz which includes the correct answer")
-public class QuizPostDto {
-
-    @ApiModelProperty("The id of the quiz")
-    public Long id;
-
-    @ApiModelProperty("The quiz question")
-    public String question;
+public class QuizPostDto extends QuizDto {
 
     @ApiModelProperty("The id of the correct answer")
     public Integer correctAnswer;
-
-    @ApiModelProperty("List of answers")
-    public List<String> answers;
-
-    @ApiModelProperty("The parent category")
-    public Long parentCategoryId;
 
 
     public QuizPostDto() {}
