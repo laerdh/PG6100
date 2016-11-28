@@ -17,7 +17,8 @@ public interface GameDao {
     Game findById(@Bind("id") Long id);
 
     @SqlUpdate("insert into GAME (quizzes, answered, totalQuizzes) values (:quizzes, :answered, :totalQuizzes)")
-    int insert(@Bind("quizzes") String quizzes,
+    @GetGeneratedKeys
+    Long insert(@Bind("quizzes") String quizzes,
                @Bind("answered") Integer answered,
                @Bind("totalQuizzes") Integer totalQuizzes);
 }

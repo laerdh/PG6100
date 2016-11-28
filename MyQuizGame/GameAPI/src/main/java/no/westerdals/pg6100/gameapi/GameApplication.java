@@ -21,6 +21,8 @@ import org.skife.jdbi.v2.Handle;
  */
 public class GameApplication extends Application<GameConfiguration> {
 
+    public static final String API_PATH = "/game/api";
+
     public static void main(String[] args) throws Exception {
         new GameApplication().run(args);
     }
@@ -53,7 +55,7 @@ public class GameApplication extends Application<GameConfiguration> {
         final GameDao gameDao = jdbi.onDemand(GameDao.class);
         final GameRest gameResource = new GameRest(gameDao);
 
-        environment.jersey().setUrlPattern("/game/api/*");
+        environment.jersey().setUrlPattern(API_PATH + "/*");
 
         environment.jersey().register(new ApiListingResource());
         environment.jersey().register(gameResource);
@@ -65,7 +67,7 @@ public class GameApplication extends Application<GameConfiguration> {
         BeanConfig config = new BeanConfig();
         config.setVersion("0.0.1");
         config.setHost("localhost:8081");
-        config.setBasePath("/game/api/");
+        config.setBasePath(API_PATH);
         config.setResourcePackage("no.westerdals.pg6100.gameapi");
         config.setScan(true);
     }
@@ -73,7 +75,7 @@ public class GameApplication extends Application<GameConfiguration> {
     private void createTestData(DBI dbi) {
         try (Handle handle = dbi.open()) {
             handle.createCall("" +
-                    "CREATE TABLE GAME" +
+                    "CREATE TABLE IF NOT EXISTS GAME" +
                     "(" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
                     "quizzes VARCHAR(128)," +
@@ -81,6 +83,23 @@ public class GameApplication extends Application<GameConfiguration> {
                     "totalQuizzes INT" +
                     ");").invoke();
 
+            handle.createStatement("" +
+                    "INSERT INTO GAME (quizzes, answered)" +
+                    "VALUES (?, ?);")
+                    .bind(0, "{ \"quizzes\" : [4,2,5,9,3,1,11] }")
+                    .bind(1, 0).execute();
+
+            handle.createStatement("" +
+                    "INSERT INTO GAME (quizzes, answered)" +
+                    "VALUES (?, ?);")
+                    .bind(0, "{ \"quizzes\" : [4,11,14,23,32,35] }")
+                    .bind(1, 0).execute();
+
+            handle.createStatement("" +
+                    "INSERT INTO GAME (quizzes, answered)" +
+                    "VALUES (?, ?);")
+                    .bind(0, "{ \"quizzes\" : [1,95,34,21,58,38,59,23] }")
+                    .bind(1, 0).execute();
         }
     }
 }
