@@ -14,7 +14,7 @@ public class Game {
     private Long id;
 
     @JsonProperty
-    private List<Long> quizzes;
+    private Integer quizzes;
 
     @NotNull
     @JsonProperty
@@ -29,7 +29,7 @@ public class Game {
         // Jackson deserialization
     }
 
-    public Game(Long id, List<Long> quizzes, Integer answered, Integer totalQuizzes) {
+    public Game(Long id, Integer quizzes, Integer answered, Integer totalQuizzes) {
         this.id = id;
         this.quizzes = quizzes;
         this.answered = answered;
@@ -41,12 +41,9 @@ public class Game {
 
     public Long getId() { return id; }
 
-    public void setQuizzes(List<Long> quizzes) { this.quizzes = quizzes; }
+    public void setQuizzes(Integer quizzes) { this.quizzes = quizzes; }
 
-    public List<Long> getQuizzes() {
-        if (quizzes == null) {
-            return new ArrayList<>();
-        }
+    public Integer getQuizzes() {
         return quizzes;
     }
 
@@ -58,6 +55,6 @@ public class Game {
         this.totalQuizzes = totalQuizzes; }
 
     public Integer getTotalQuizzes() {
-        return quizzes.size();
+        return totalQuizzes;
     }
 }

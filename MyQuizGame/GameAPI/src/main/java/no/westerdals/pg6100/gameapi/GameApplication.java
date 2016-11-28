@@ -5,17 +5,12 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.swagger.config.ConfigFactory;
-import io.swagger.config.ScannerFactory;
-import io.swagger.config.SwaggerConfig;
 import io.swagger.jaxrs.config.BeanConfig;
-import io.swagger.jaxrs.config.DefaultJaxrsScanner;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import no.westerdals.pg6100.gameapi.dao.GameDAO;
 import no.westerdals.pg6100.gameapi.resources.GameRest;
-import org.hibernate.sql.Template;
-import org.skife.jdbi.asm.ClassReader;
 import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
 
 /*
     Dropwizard uses:
@@ -52,6 +47,9 @@ public class GameApplication extends Application<GameConfiguration> {
         final DBIFactory factory = new DBIFactory();
         final DBI jdbi = factory.build(environment, gameConfiguration.getDataSourceFactory(), "h2");
 
+        // Init H2 testdata
+        createTestData(jdbi);
+
         final GameDAO gameDAO = jdbi.onDemand(GameDAO.class);
         final GameRest gameResource = new GameRest(gameDAO);
 
@@ -67,8 +65,42 @@ public class GameApplication extends Application<GameConfiguration> {
         BeanConfig config = new BeanConfig();
         config.setVersion("0.0.1");
         config.setHost("localhost:8081");
-        config.setBasePath("/api/");
+        config.setBasePath("/game/api/");
         config.setResourcePackage("no.westerdals.pg6100.gameapi");
         config.setScan(true);
+    }
+
+    private void createTestData(DBI dbi) {
+        try (Handle handle = dbi.open()) {
+            handle.createCall("" +
+                    "CREATE TABLE GAME" +
+                    "(" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY," +
+                    "quizzes INT," +
+                    "answered INT," +
+                    "totalQuizzes INT" +
+                    ");").invoke();
+
+            handle.createStatement("" +
+                    "INSERT INTO GAME (quizzes, answered, totalQuizzes)" +
+                    "VALUES (?, ?, ?)")
+                    .bind(0, 5)
+                    .bind(1, 2)
+                    .bind(2, 5).execute();
+
+            handle.createStatement("" +
+                    "INSERT INTO GAME (quizzes, answered, totalQuizzes)" +
+                    "VALUES (?, ?, ?)")
+                    .bind(0, 3)
+                    .bind(1, 0)
+                    .bind(2, 7).execute();
+
+            handle.createStatement("" +
+                    "INSERT INTO GAME (quizzes, answered, totalQuizzes)" +
+                    "VALUES (?, ?, ?)")
+                    .bind(0, 4)
+                    .bind(1, 2)
+                    .bind(2, 5).execute();
+        }
     }
 }

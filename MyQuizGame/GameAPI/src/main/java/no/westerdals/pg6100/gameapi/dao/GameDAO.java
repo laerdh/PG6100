@@ -13,11 +13,11 @@ public interface GameDAO {
     @SqlQuery("select * from GAME limit :limit")
     List<Game> getAll(@Bind("limit") Integer limit);
 
-    @SqlQuery("select from GAME where id = :id")
+    @SqlQuery("select * from GAME where id = :id")
     Game findById(@Bind("id") Long id);
 
-    @SqlBatch("insert into GAME (quizzes, answered, totalQuizzes) values (:quizzes, :answered, :totalQuizzes")
-    int[] insert(@Bind("quizzes") List<Long> quizzes,
+    @SqlUpdate("insert into GAME (quizzes, answered, totalQuizzes) values (:quizzes, :answered, :totalQuizzes)")
+    int insert(@Bind("quizzes") Integer quizzes,
                @Bind("answered") Integer answered,
                @Bind("totalQuizzes") Integer totalQuizzes);
 }

@@ -8,6 +8,9 @@ import no.westerdals.pg6100.gameapi.dao.GameDAO;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Api(value = "/games", description = "API for Quiz Games")
@@ -18,9 +21,11 @@ public class GameRest {
 
     private GameDAO gameDao;
 
+
     public GameRest(GameDAO gameDao) {
         this.gameDao = gameDao;
     }
+
 
     @ApiOperation("Get all active games")
     @GET
@@ -30,6 +35,7 @@ public class GameRest {
                              Integer n) {
         return gameDao.getAll(n);
     }
+
 
     @ApiOperation("Get an active game by id")
     @GET
@@ -41,4 +47,26 @@ public class GameRest {
     }
 
 
+    @ApiOperation("Add a game")
+    @POST
+    public Response addGame(
+            @ApiParam("Body with uizzes, answered quizzes and total quizzes")
+            Game game) {
+        if (game.getQuizzes() == null) {
+            throw new WebApplicationException("Must provide quizzes", 400);
+        }
+
+        if (game.getAnswered() == null) {
+            game.setAnswered(0);
+        }
+
+
+        try {
+            gameDao.insert(game.getQuizzes(), game.getAnswered(), game.getTotalQuizzes());
+        } catch (Exception e) {
+            throw new WebApplicationException(e.getMessage(), 500);
+        }
+
+        return Response.status(201).build();
+    }
 }
