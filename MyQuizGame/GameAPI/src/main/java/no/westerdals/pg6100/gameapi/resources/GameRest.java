@@ -10,19 +10,23 @@ import no.westerdals.pg6100.gameapi.dao.GameDao;
 import no.westerdals.pg6100.gameapi.utils.Formats;
 
 import javax.ws.rs.*;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.List;
 
 @Api(value = "/games", description = "API for Quiz Games")
 @Path("/games")
 @Consumes({
-        Formats.BASE_JSON,
-        Formats.V1_JSON
+        Formats.V1_JSON,
+        Formats.BASE_JSON
 })
 @Produces({
-        Formats.BASE_JSON,
-        Formats.V1_JSON
+        Formats.V1_JSON,
+        Formats.BASE_JSON
 })
 public class GameRest {
 
@@ -39,7 +43,7 @@ public class GameRest {
     @ApiOperation("Get all active games")
     @GET
     public List<Game> getAll(@DefaultValue("5")
-                             @ApiParam("Number of quizzes in game")
+                             @ApiParam("Number of games")
                              @QueryParam("n")
                              Integer n) {
 
@@ -61,24 +65,29 @@ public class GameRest {
     @ApiOperation("Add a game")
     @POST
     public Response addGame(
+            @DefaultValue("5")
+            @ApiParam("The number of quizzes in game")
+            @QueryParam("n")
+            Integer n,
+
             @ApiParam("Body with quizzes, answered quizzes and total quizzes")
             Game game) {
 
-        if (game.getQuizzes() == null) {
-            throw new WebApplicationException("Must provide quizzes", 400);
+        if (n < 1) {
+            throw new WebApplicationException("Number of quizzes cannot be less than 1", 400);
         }
 
-        if (game.getAnswered() == null) {
-            game.setAnswered(0);
-        }
+        // Call the other API
+        Response response = getRandomQuizzes(n, 3);
+        String quizList = response.readEntity(String.class);
 
         // Hack: Save list of quizzes as JSON String
-        Gson gson = new Gson();
-        String quizzes = "{ \"quizzes\" : " + gson.toJson(game.getQuizzes()) + " }";
+        String quizzes = "{ \"quizzes\" : " + quizList + " }";
+        System.out.println("\n\nQUIZLIST: " + quizList + "\n\n");
 
         Long id;
         try {
-            id = gameDao.insert(quizzes, game.getAnswered(), game.getQuizzes().size());
+            id = gameDao.insert(quizzes, 0, 0);
         } catch (Exception e) {
             throw new WebApplicationException(e.getMessage(), 500);
         }
@@ -87,4 +96,17 @@ public class GameRest {
                 .location(URI.create(RESOURCE_PATH + "/" + id))
                 .build();
     }
+
+    private Response getRandomQuizzes(Integer limit, Integer category) {
+        URI uri = UriBuilder.fromUri(GameApplication.QUIZ_RESOURCE_PATH)
+                .queryParam("n", limit)
+                .queryParam("filter", category)
+                .build();
+
+        Client client = ClientBuilder.newClient();
+
+        return client.target(uri).request(MediaType.APPLICATION_JSON_TYPE).post(null);
+    }
+
+
 }
