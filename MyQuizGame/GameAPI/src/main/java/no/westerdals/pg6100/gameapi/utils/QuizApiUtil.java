@@ -11,6 +11,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 public class QuizApiUtil {
 
@@ -18,6 +21,8 @@ public class QuizApiUtil {
     private static final String SUBSUBCATEGORIES_PATH = "/subsubcategories";
     private static final String RANDOM_QUIZZES_PATH = "/randomQuizzes";
     private static final int QUERY_LIMIT = 10;
+
+    private static SubSubCategoryId[] categoryIds;
 
     /*
      * GET all subsubcategories, then select one randomly.
@@ -30,13 +35,18 @@ public class QuizApiUtil {
         String quizList;
         int limit = 0;
 
+        // Gather subsubcategories
+        getRandomSubSubcategories();
+
         do {
-            response = getQuizzes(n, getRandomSubSubcategories());
+            int index = (int)(Math.random() * categoryIds.length);
+
+            response = getQuizzes(n, categoryIds[index].id.intValue());
             quizList = response.readEntity(String.class);
             limit++;
 
             if (limit == QUERY_LIMIT) {
-                throw new WebApplicationException("Could not find any subsubcategories with " + n + " quizzes", 404);
+                throw new WebApplicationException("Could not find subsubcategory with " + n + " quizzes", 404);
             }
         } while (response.getStatus() == 404);
 
@@ -48,39 +58,23 @@ public class QuizApiUtil {
                 .queryParam("n", limit)
                 .queryParam("filter", category)
                 .build();
-
+        
         Client client = ClientBuilder.newClient();
 
-        Response response = client.target(uri).request(MediaType.APPLICATION_JSON_TYPE).post(null);
-        checkIfError(response.getStatusInfo());
-
-        return response;
+        return client.target(uri).request(MediaType.APPLICATION_JSON_TYPE).post(null);
     }
 
-    private static int getRandomSubSubcategories() {
+    private static void getRandomSubSubcategories() {
         URI uri = UriBuilder.fromUri(QUIZ_API_PATH + SUBSUBCATEGORIES_PATH).build();
 
         Client client = ClientBuilder.newClient();
         Response response = client.target(uri).request(MediaType.APPLICATION_JSON_TYPE).get();
-        checkIfError(response.getStatusInfo());
 
         Gson gson = new Gson();
-        Wrapper[] arr = gson.fromJson(response.readEntity(String.class), Wrapper[].class);
-
-        return (int)(Math.random() * arr.length);
+        categoryIds = gson.fromJson(response.readEntity(String.class), SubSubCategoryId[].class);
     }
 
-    private static void checkIfError(Response.StatusType status) {
-
-        if (status.getFamily().equals(Response.Status.Family.CLIENT_ERROR)) {
-            throw new ClientErrorException(status.getStatusCode());
-        }
-        if (status.getFamily().equals(Response.Status.Family.SERVER_ERROR)) {
-            throw new ServerErrorException(status.getStatusCode());
-        }
-    }
-
-    private static class Wrapper{
+    private static class SubSubCategoryId{
         Long id;
     }
 }

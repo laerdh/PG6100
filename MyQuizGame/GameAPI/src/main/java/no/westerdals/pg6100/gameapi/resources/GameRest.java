@@ -1,8 +1,6 @@
 package no.westerdals.pg6100.gameapi.resources;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import no.westerdals.pg6100.gameapi.GameApplication;
 import no.westerdals.pg6100.gameapi.core.Game;
 import no.westerdals.pg6100.gameapi.dao.GameDao;
@@ -49,6 +47,10 @@ public class GameRest {
 
 
     @ApiOperation("Get an active game by id")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Returns the game by given id"),
+            @ApiResponse(code = 404, message = "Game could not be found")
+    })
     @GET
     @Path("/{id}")
     public Game findById(@ApiParam("The id of game")
@@ -60,15 +62,17 @@ public class GameRest {
 
 
     @ApiOperation("Add a game")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Created game with specified number of quizzes"),
+            @ApiResponse(code = 404, message = "Not enough quizzes to start a game"),
+            @ApiResponse(code = 400, message = "Number of quizzes must be 1 or more")
+    })
     @POST
     public Response addGame(
             @DefaultValue("5")
             @ApiParam("The number of quizzes in game")
             @QueryParam("n")
-            Integer n,
-
-            @ApiParam("Body with quizzes, answered quizzes and total quizzes")
-            Game game) {
+            Integer n) {
 
         if (n < 1) {
             throw new WebApplicationException("Number of quizzes cannot be less than 1", 400);
