@@ -22,7 +22,6 @@ import org.skife.jdbi.v2.Handle;
 public class GameApplication extends Application<GameConfiguration> {
 
     public static final String API_PATH = "/game/api";
-    public static final String QUIZ_RESOURCE_PATH = "http://localhost:8080/myquizgame/quiz/api/randomQuizzes";
 
     public static void main(String[] args) throws Exception {
         new GameApplication().run(args);

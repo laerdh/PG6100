@@ -1,6 +1,5 @@
 package no.westerdals.pg6100.gameapi.resources;
 
-import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -8,13 +7,11 @@ import no.westerdals.pg6100.gameapi.GameApplication;
 import no.westerdals.pg6100.gameapi.core.Game;
 import no.westerdals.pg6100.gameapi.dao.GameDao;
 import no.westerdals.pg6100.gameapi.utils.Formats;
+import no.westerdals.pg6100.gameapi.utils.QuizApiUtil;
+import org.assertj.core.util.Strings;
 
 import javax.ws.rs.*;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.List;
 
@@ -78,8 +75,11 @@ public class GameRest {
         }
 
         // Call the other API
-        Response response = getRandomQuizzes(n, 3);
-        String quizList = response.readEntity(String.class);
+        // Find a subsubcategory with quiz
+        String quizList = QuizApiUtil.getRandomQuizzes(n);
+        if (Strings.isNullOrEmpty(quizList)) {
+            throw new WebApplicationException("Something went wrong when collecting quizzes for this game", 500);
+        }
 
         // Hack: Save list of quizzes as JSON String
         String quizzes = "{ \"quizzes\" : " + quizList + " }";
@@ -96,17 +96,4 @@ public class GameRest {
                 .location(URI.create(RESOURCE_PATH + "/" + id))
                 .build();
     }
-
-    private Response getRandomQuizzes(Integer limit, Integer category) {
-        URI uri = UriBuilder.fromUri(GameApplication.QUIZ_RESOURCE_PATH)
-                .queryParam("n", limit)
-                .queryParam("filter", category)
-                .build();
-
-        Client client = ClientBuilder.newClient();
-
-        return client.target(uri).request(MediaType.APPLICATION_JSON_TYPE).post(null);
-    }
-
-
 }
