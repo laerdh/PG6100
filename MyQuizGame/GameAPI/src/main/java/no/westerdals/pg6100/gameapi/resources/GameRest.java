@@ -111,6 +111,10 @@ public class GameRest {
 
 
     @ApiOperation("Increment answered questions")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Answered questions in game was incremented by one"),
+            @ApiResponse(code = 404, message = "Cannot find game")
+    })
     @Path("/{id}")
     @PATCH
     public Response updateAnswered(
@@ -119,6 +123,26 @@ public class GameRest {
 
         if (gameDao.updateAnswer(id) > 0) {
             return Response.status(200)
+                    .build();
+        }
+        return Response.status(404)
+                .build();
+    }
+
+
+    @ApiOperation("Delete a game")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "Game was deleted"),
+            @ApiResponse(code = 404, message = "Game could not be found")
+    })
+    @Path("/{id}")
+    @DELETE
+    public Response deleteGame(
+            @ApiParam("The id of the game to be deleted")
+            Long id) {
+
+        if (gameDao.deleteGame(id) > 0) {
+            return Response.status(204)
                     .build();
         }
         return Response.status(404)
