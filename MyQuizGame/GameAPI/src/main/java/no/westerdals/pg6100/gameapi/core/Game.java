@@ -1,7 +1,6 @@
 package no.westerdals.pg6100.gameapi.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -13,6 +12,9 @@ public class Game {
 
     @JsonProperty
     private List<Long> quizzes;
+
+    @JsonProperty
+    private String currentQuiz;
 
     @NotNull
     @JsonProperty
@@ -42,6 +44,10 @@ public class Game {
     public void setQuizzes(List<Long> quizzes) { this.quizzes = quizzes; }
 
     public List<Long> getQuizzes() { return quizzes; }
+
+    public void setCurrentQuiz(String currentQuiz) { this.currentQuiz = currentQuiz; }
+
+    public String getCurrentQuiz() { return currentQuiz; }
 
     public void setAnswered(Integer answered) { this.answered = answered; }
 

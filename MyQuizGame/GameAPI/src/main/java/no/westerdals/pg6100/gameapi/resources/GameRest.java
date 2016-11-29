@@ -1,6 +1,7 @@
 package no.westerdals.pg6100.gameapi.resources;
 
 import io.swagger.annotations.*;
+import io.swagger.jaxrs.PATCH;
 import no.westerdals.pg6100.gameapi.GameApplication;
 import no.westerdals.pg6100.gameapi.core.Game;
 import no.westerdals.pg6100.gameapi.dao.GameDao;
@@ -57,14 +58,21 @@ public class GameRest {
                          @PathParam("id")
                          Long id) {
 
-        return gameDao.findById(id);
+
+            Game game = gameDao.findById(id);
+            if (game != null) {
+                game.setCurrentQuiz(URI.create(QuizApiUtil.QUIZ_API_PATH +
+                        QuizApiUtil.QUIZZES_PATH + "/" + game.getQuizzes().get(game.getAnswered())).toString());
+            }
+
+            return game;
     }
 
 
     @ApiOperation("Add a game")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Created game with specified number of quizzes"),
-            @ApiResponse(code = 404, message = "Not enough quizzes to start a game"),
+            @ApiResponse(code = 404, message = "Could not find subsubcategory with n quizzes"),
             @ApiResponse(code = 400, message = "Number of quizzes must be 1 or more")
     })
     @POST
@@ -91,13 +99,29 @@ public class GameRest {
 
         Long id;
         try {
-            id = gameDao.insert(quizzes, 0, 0);
+            id = gameDao.insert(quizzes, 0, n);
         } catch (Exception e) {
             throw new WebApplicationException(e.getMessage(), 500);
         }
 
         return Response.status(201)
                 .location(URI.create(RESOURCE_PATH + "/" + id))
+                .build();
+    }
+
+
+    @ApiOperation("Increment answered questions")
+    @Path("/{id}")
+    @PATCH
+    public Response updateAnswered(
+            @ApiParam("The id of the game to updated")
+            Long id) {
+
+        if (gameDao.updateAnswer(id) > 0) {
+            return Response.status(200)
+                    .build();
+        }
+        return Response.status(404)
                 .build();
     }
 }

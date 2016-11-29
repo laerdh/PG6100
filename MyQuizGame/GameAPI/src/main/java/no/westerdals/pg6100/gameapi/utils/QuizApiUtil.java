@@ -2,8 +2,6 @@ package no.westerdals.pg6100.gameapi.utils;
 
 import com.google.gson.Gson;
 
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.ServerErrorException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -11,15 +9,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
 
 public class QuizApiUtil {
 
-    private static final String QUIZ_API_PATH = "http://localhost:8080/myquizgame/quiz/api";
-    private static final String SUBSUBCATEGORIES_PATH = "/subsubcategories";
-    private static final String RANDOM_QUIZZES_PATH = "/randomQuizzes";
+    public static final String QUIZ_API_PATH = "http://localhost:8080/myquizgame/quiz/api";
+    public static final String SUBSUBCATEGORIES_PATH = "/subsubcategories";
+    public static final String RANDOM_QUIZZES_PATH = "/randomQuizzes";
+    public static final String QUIZZES_PATH = "/quizzes";
+
     private static final int QUERY_LIMIT = 10;
 
     private static SubSubCategoryId[] categoryIds;
@@ -58,7 +55,7 @@ public class QuizApiUtil {
                 .queryParam("n", limit)
                 .queryParam("filter", category)
                 .build();
-        
+
         Client client = ClientBuilder.newClient();
 
         return client.target(uri).request(MediaType.APPLICATION_JSON_TYPE).post(null);
