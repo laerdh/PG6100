@@ -50,6 +50,15 @@ public class QuizApiUtil {
         return quizList;
     }
 
+    public static Response getQuizAnswer(Long id) {
+        URI uri = UriBuilder.fromUri(QUIZ_API_PATH + QUIZZES_PATH + "/" + id + "/answer")
+                .build();
+
+        Client client = ClientBuilder.newClient();
+
+        return client.target(uri).request(MediaType.APPLICATION_JSON_TYPE).get();
+    }
+
     private static Response getQuizzes(Integer limit, Integer category) {
         URI uri = UriBuilder.fromUri(QUIZ_API_PATH + RANDOM_QUIZZES_PATH)
                 .queryParam("n", limit)

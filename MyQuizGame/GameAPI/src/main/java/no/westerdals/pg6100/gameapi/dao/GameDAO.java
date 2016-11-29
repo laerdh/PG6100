@@ -22,6 +22,13 @@ public interface GameDao {
     @SqlUpdate("delete from GAME where id = :id")
     int deleteGame(@Bind("id") Long id);
 
+    @SqlUpdate("Update GAME set (quizzes, currentQuiz, answered, totalQuizzes) values (:quizzes,  :currentQuiz, :answered, :totalQuizzes)")
+    int update(@Bind("id") Long id,
+                   @Bind("quizzes") String quizzes,
+                   @Bind("currentQuiz") String currentQuiz,
+                   @Bind("answered") Integer answered,
+                   @Bind("totalQuizzes") Integer totalQuizzes);
+
     @SqlUpdate("insert into GAME (quizzes, answered, totalQuizzes) values (:quizzes, :answered, :totalQuizzes)")
     @GetGeneratedKeys
     Long insert(@Bind("quizzes") String quizzes,

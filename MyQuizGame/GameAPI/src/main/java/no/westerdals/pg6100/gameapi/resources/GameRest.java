@@ -1,7 +1,6 @@
 package no.westerdals.pg6100.gameapi.resources;
 
 import io.swagger.annotations.*;
-import io.swagger.jaxrs.PATCH;
 import no.westerdals.pg6100.gameapi.GameApplication;
 import no.westerdals.pg6100.gameapi.core.Game;
 import no.westerdals.pg6100.gameapi.dao.GameDao;
@@ -27,6 +26,7 @@ import java.util.List;
 public class GameRest {
 
     private final String RESOURCE_PATH = GameApplication.API_PATH + "/games";
+    private final String API_PARAM = "The id of the game";
 
     private GameDao gameDao;
 
@@ -43,7 +43,10 @@ public class GameRest {
                              @QueryParam("n")
                              Integer n) {
 
-        return gameDao.getAll(n);
+        List<Game> games = gameDao.getAll(n);
+        games.forEach(g -> g.setCurrentQuiz(getQuizPath(g.getQuizzes().get(g.getAnswered()))));
+
+        return games;
     }
 
 
@@ -54,15 +57,13 @@ public class GameRest {
     })
     @GET
     @Path("/{id}")
-    public Game findById(@ApiParam("The id of game")
+    public Game findById(@ApiParam(API_PARAM)
                          @PathParam("id")
                          Long id) {
-
-
+        
             Game game = gameDao.findById(id);
             if (game != null) {
-                game.setCurrentQuiz(URI.create(QuizApiUtil.QUIZ_API_PATH +
-                        QuizApiUtil.QUIZZES_PATH + "/" + game.getQuizzes().get(game.getAnswered())).toString());
+                game.setCurrentQuiz(getQuizPath(game.getQuizzes().get(game.getAnswered())));
             }
 
             return game;
@@ -110,23 +111,50 @@ public class GameRest {
     }
 
 
-    @ApiOperation("Increment answered questions")
+    @ApiOperation("Post an answer to a quiz")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Answered questions in game was incremented by one"),
-            @ApiResponse(code = 404, message = "Cannot find game")
+            @ApiResponse(code = 200, message = "Correct answer was given"),
+            @ApiResponse(code = 204, message = "Wrong answer was given and the quiz ended")
     })
+    @POST
     @Path("/{id}")
-    @PATCH
-    public Response updateAnswered(
-            @ApiParam("The id of the game to updated")
-            Long id) {
+    public Response postAnswer(
+            @ApiParam(API_PARAM)
+            @PathParam("id")
+            Long id,
 
-        if (gameDao.updateAnswer(id) > 0) {
-            return Response.status(200)
-                    .build();
+            @ApiParam("Answer to quiz")
+            @QueryParam("answer")
+            Integer answer) {
+
+        if (answer < 0) {
+            throw new WebApplicationException("Not a valid answer", 400);
         }
-        return Response.status(404)
-                .build();
+
+        Game g = gameDao.findById(id);
+
+        if (g == null) {
+            return Response.status(404).build();
+        }
+
+        // TODO:
+        // Condition to check if quiz is finished
+
+        Long quizId = g.getQuizzes().get(g.getAnswered());
+        Integer correctAnswer = QuizApiUtil.getQuizAnswer(quizId).readEntity(Integer.class);
+
+        if (!answer.equals(correctAnswer)) {
+            deleteGame(g.getId());
+            return Response.status(204).build();
+        }
+
+        /*
+         * Answer was correct. Increment
+         * answered questions by 1 and
+         * return 200 OK.
+         */
+        gameDao.updateAnswer(g.getId());
+        return Response.status(200).build();
     }
 
 
@@ -138,7 +166,7 @@ public class GameRest {
     @Path("/{id}")
     @DELETE
     public Response deleteGame(
-            @ApiParam("The id of the game to be deleted")
+            @ApiParam(API_PARAM)
             Long id) {
 
         if (gameDao.deleteGame(id) > 0) {
@@ -147,5 +175,11 @@ public class GameRest {
         }
         return Response.status(404)
                 .build();
+    }
+
+
+    private String getQuizPath(Long id) {
+        return URI.create(QuizApiUtil.QUIZ_API_PATH + QuizApiUtil.QUIZZES_PATH
+                + "/" + id).toString();
     }
 }
