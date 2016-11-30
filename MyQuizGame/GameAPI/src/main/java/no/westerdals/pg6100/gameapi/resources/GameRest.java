@@ -9,6 +9,7 @@ import no.westerdals.pg6100.gameapi.utils.QuizApiUtil;
 import org.assertj.core.util.Strings;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
@@ -25,9 +26,16 @@ import java.util.List;
 })
 public class GameRest {
 
+    // API
     private final String RESOURCE_PATH = GameApplication.API_PATH + "/games";
     private final String API_PARAM = "The id of the game";
 
+    // Game status messages
+    private final String ROUND_WON = "Your answer was correct! Get ready for next question!";
+    private final String GAME_WON = "You won the quiz! All answers were correct!";
+    private final String GAME_LOST = "Wrong answer! Game over.";
+
+    // DAO
     private GameDao gameDao;
 
 
@@ -44,7 +52,10 @@ public class GameRest {
                              Integer n) {
 
         List<Game> games = gameDao.getAll(n);
-        games.forEach(g -> g.setCurrentQuiz(getQuizPath(g.getQuizzes().get(g.getAnswered()))));
+
+        if (games != null) {
+            games.forEach(g -> g.setCurrentQuiz(getQuizPath(g.getQuizzes().get(g.getAnswered()))));
+        }
 
         return games;
     }
@@ -53,15 +64,16 @@ public class GameRest {
     @ApiOperation("Get an active game by id")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Returns the game by given id"),
-            @ApiResponse(code = 404, message = "Game could not be found")
+            @ApiResponse(code = 404, message = "Game not found")
     })
     @GET
     @Path("/{id}")
     public Game findById(@ApiParam(API_PARAM)
                          @PathParam("id")
                          Long id) {
-        
+
             Game game = gameDao.findById(id);
+
             if (game != null) {
                 game.setCurrentQuiz(getQuizPath(game.getQuizzes().get(game.getAnswered())));
             }
@@ -114,10 +126,12 @@ public class GameRest {
     @ApiOperation("Post an answer to a quiz")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Correct answer was given"),
-            @ApiResponse(code = 204, message = "Wrong answer was given and the quiz ended")
+            @ApiResponse(code = 204, message = "Wrong answer was given and the quiz ended"),
+            @ApiResponse(code = 404, message = "Game not found")
     })
     @POST
     @Path("/{id}")
+    @Produces(MediaType.TEXT_PLAIN)
     public Response postAnswer(
             @ApiParam(API_PARAM)
             @PathParam("id")
@@ -137,31 +151,33 @@ public class GameRest {
             return Response.status(404).build();
         }
 
-        // TODO:
-        // Condition to check if quiz is finished
-
         Long quizId = g.getQuizzes().get(g.getAnswered());
-        Integer correctAnswer = QuizApiUtil.getQuizAnswer(quizId).readEntity(Integer.class);
 
-        if (!answer.equals(correctAnswer)) {
+        if (!isCorrectAnswer(quizId, answer)) {
             deleteGame(g.getId());
-            return Response.status(204).build();
+            return Response.status(204).entity(GAME_LOST).build();
         }
 
         /*
          * Answer was correct. Increment
          * answered questions by 1 and
-         * return 200 OK.
+         * return 200 OK. Delete game if
+         * game over
          */
         gameDao.updateAnswer(g.getId());
-        return Response.status(200).build();
+
+        if (isGameOver(g.getId())) {
+            deleteGame(g.getId());
+            return Response.status(200).entity(GAME_WON).build();
+        }
+        return Response.status(200).entity(ROUND_WON).build();
     }
 
 
     @ApiOperation("Delete a game")
     @ApiResponses({
             @ApiResponse(code = 204, message = "Game was deleted"),
-            @ApiResponse(code = 404, message = "Game could not be found")
+            @ApiResponse(code = 404, message = "Game not found")
     })
     @Path("/{id}")
     @DELETE
@@ -181,5 +197,19 @@ public class GameRest {
     private String getQuizPath(Long id) {
         return URI.create(QuizApiUtil.QUIZ_API_PATH + QuizApiUtil.QUIZZES_PATH
                 + "/" + id).toString();
+    }
+
+
+    private boolean isGameOver(Long id) {
+        Game g = gameDao.findById(id);
+
+        return g != null && g.getAnswered().equals(g.getTotalQuizzes());
+    }
+
+
+    private boolean isCorrectAnswer(Long quizId, Integer answer) {
+        Integer correctAnswer = QuizApiUtil.getQuizAnswer(quizId).readEntity(Integer.class);
+
+        return correctAnswer != null && answer.equals(correctAnswer);
     }
 }
