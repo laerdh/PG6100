@@ -18,7 +18,11 @@ public class GameConfiguration extends Configuration {
     @JsonProperty
     private DataSourceFactory database = new DataSourceFactory();
 
-    public DataSourceFactory getDataSourceFactory() {
+    public DataSourceFactory getDatabase() {
         return database;
+    }
+
+    public void setDatabase(DataSourceFactory database) {
+        this.database = database;
     }
 }

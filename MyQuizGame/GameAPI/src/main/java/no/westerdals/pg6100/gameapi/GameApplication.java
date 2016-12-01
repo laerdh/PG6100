@@ -29,7 +29,7 @@ public class GameApplication extends Application<GameConfiguration> {
 
     @Override
     public String getName() {
-        return "Game API for Quiz written in DropWizard";
+        return "Game API for MyQuizGame written in DropWizard";
     }
 
     @Override
@@ -47,7 +47,7 @@ public class GameApplication extends Application<GameConfiguration> {
 
         // DB config
         final DBIFactory factory = new DBIFactory();
-        final DBI jdbi = factory.build(environment, gameConfiguration.getDataSourceFactory(), "h2");
+        final DBI jdbi = factory.build(environment, gameConfiguration.getDatabase(), "h2");
 
         // Init H2 testdata
         createTestData(jdbi);
@@ -82,24 +82,24 @@ public class GameApplication extends Application<GameConfiguration> {
                     "answered INT," +
                     "totalQuizzes INT" +
                     ");").invoke();
-
-            handle.createStatement("" +
-                    "INSERT INTO GAME (quizzes, answered)" +
-                    "VALUES (?, ?);")
-                    .bind(0, "{ \"quizzes\" : [4,2,5,9,3,1,11] }")
-                    .bind(1, 0).execute();
-
-            handle.createStatement("" +
-                    "INSERT INTO GAME (quizzes, answered)" +
-                    "VALUES (?, ?);")
-                    .bind(0, "{ \"quizzes\" : [4,11,14,23,32,35] }")
-                    .bind(1, 0).execute();
-
-            handle.createStatement("" +
-                    "INSERT INTO GAME (quizzes, answered)" +
-                    "VALUES (?, ?);")
-                    .bind(0, "{ \"quizzes\" : [1,95,34,21,58,38,59,23] }")
-                    .bind(1, 0).execute();
+//
+//            handle.createStatement("" +
+//                    "INSERT INTO GAME (quizzes, answered)" +
+//                    "VALUES (?, ?);")
+//                    .bind(0, "{ \"quizzes\" : [4,2,5,9,3,1,11] }")
+//                    .bind(1, 0).execute();
+//
+//            handle.createStatement("" +
+//                    "INSERT INTO GAME (quizzes, answered)" +
+//                    "VALUES (?, ?);")
+//                    .bind(0, "{ \"quizzes\" : [4,11,14,23,32,35] }")
+//                    .bind(1, 0).execute();
+//
+//            handle.createStatement("" +
+//                    "INSERT INTO GAME (quizzes, answered)" +
+//                    "VALUES (?, ?);")
+//                    .bind(0, "{ \"quizzes\" : [1,95,34,21,58,38,59,23] }")
+//                    .bind(1, 0).execute();
         }
     }
 }

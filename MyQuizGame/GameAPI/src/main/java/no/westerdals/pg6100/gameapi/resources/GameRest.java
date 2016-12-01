@@ -183,14 +183,13 @@ public class GameRest {
     @DELETE
     public Response deleteGame(
             @ApiParam(API_PARAM)
+            @PathParam("id")
             Long id) {
 
         if (gameDao.deleteGame(id) > 0) {
-            return Response.status(204)
-                    .build();
+            return Response.status(204).build();
         }
-        return Response.status(404)
-                .build();
+        return Response.status(404).build();
     }
 
 
