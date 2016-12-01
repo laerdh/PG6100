@@ -44,6 +44,7 @@ public class GameRestIT {
         wiremockServer.stop();
     }
 
+
     private void stubJsonQuizResponse(String json) throws   Exception {
         wiremockServer.stubFor(
                 WireMock.post(
