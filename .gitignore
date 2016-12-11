@@ -7,6 +7,7 @@ MyQuizGame/quiz/target
 MyQuizGame/restAPI/target
 MyQuizGame/GameAPI/target
 MyQuizGame/QuizAPI/target
+MyQuizGame/QuizSOAP/target
 MyQuizGame/report/target
 WorkshopREST/target
 WorkshopREST/.idea
