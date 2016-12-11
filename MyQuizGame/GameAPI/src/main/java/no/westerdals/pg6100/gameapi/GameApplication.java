@@ -1,5 +1,6 @@
 package no.westerdals.pg6100.gameapi;
 
+import com.netflix.config.ConfigurationManager;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.jdbi.DBIFactory;
@@ -9,6 +10,7 @@ import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import no.westerdals.pg6100.gameapi.dao.GameDao;
 import no.westerdals.pg6100.gameapi.resources.GameRest;
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
@@ -60,8 +62,7 @@ public class GameApplication extends Application<GameConfiguration> {
         environment.jersey().register(new ApiListingResource());
         environment.jersey().register(gameResource);
 
-        // Swagger
-
+        // Swagger configuration
         environment.jersey().register(new io.swagger.jaxrs.listing.SwaggerSerializers());
 
         BeanConfig config = new BeanConfig();
@@ -70,6 +71,17 @@ public class GameApplication extends Application<GameConfiguration> {
         config.setBasePath(API_PATH);
         config.setResourcePackage("no.westerdals.pg6100.gameapi");
         config.setScan(true);
+
+        // Hystrix configuration
+        AbstractConfiguration conf = ConfigurationManager.getConfigInstance();
+        // How long to wait before giving up a request?
+        conf.setProperty("hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds", 500);
+        // How many failures before activating circuit breaker?
+        conf.setProperty("hystrix.command.default.circuitBreaker.requestVolumeThreshold", 2);
+        conf.setProperty("hystrix.command.default.circuitBreaker.errorThresholdPercentage", 50);
+        // For how long should the circuit breaker stop the requests?
+        // After this, 1 single request will try to check if the remote server is ok
+        conf.setProperty("hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds", 5000);
     }
 
     private void createTestData(DBI dbi) {

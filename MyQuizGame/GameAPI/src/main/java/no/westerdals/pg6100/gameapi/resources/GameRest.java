@@ -4,8 +4,7 @@ import io.swagger.annotations.*;
 import no.westerdals.pg6100.gameapi.GameApplication;
 import no.westerdals.pg6100.gameapi.core.Game;
 import no.westerdals.pg6100.gameapi.dao.GameDao;
-import no.westerdals.pg6100.gameapi.utils.Formats;
-import no.westerdals.pg6100.gameapi.utils.QuizApiUtil;
+import no.westerdals.pg6100.gameapi.utils.*;
 import org.assertj.core.util.Strings;
 
 import javax.ws.rs.*;
@@ -14,7 +13,6 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
 
-import static no.westerdals.pg6100.gameapi.utils.QuizApiUtil.isCorrectAnswer;
 
 @Api(value = "/games", description = "API for Quiz Games")
 @Path("/games")
@@ -103,7 +101,7 @@ public class GameRest {
 
         // Call the other API
         // Find a subsubcategory with quiz
-        String quizList = QuizApiUtil.getRandomQuizzes(n);
+        String quizList = new QuizClient(n).execute();
         if (Strings.isNullOrEmpty(quizList)) {
             throw new WebApplicationException("Something went wrong when collecting quizzes for this game", 500);
         }
@@ -196,10 +194,14 @@ public class GameRest {
 
 
     private String getQuizPath(Long id) {
-        return URI.create(QuizApiUtil.QUIZ_API_PATH + QuizApiUtil.QUIZZES_PATH
-                + "/" + id).toString();
+        return URI.create(QuizApiURI.QUIZZES_PATH + "/" + id).toString();
     }
 
+    private boolean isCorrectAnswer(Long quizId, Integer answer) {
+        Integer correctAnswer = new QuizAnswerClient(quizId).execute();
+
+        return correctAnswer != null && correctAnswer.equals(answer);
+    }
 
     private boolean isGameOver(Long id) {
         Game g = gameDao.findById(id);
