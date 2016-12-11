@@ -5,6 +5,7 @@ import io.swagger.jaxrs.PATCH;
 import no.westerdals.pg6100.quizapi.api.utils.Formats;
 import no.westerdals.pg6100.quizapi.dto.QuizDto;
 import no.westerdals.pg6100.quizapi.dto.QuizPostDto;
+import no.westerdals.pg6100.quizapi.dto.collection.ListDto;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -25,7 +26,24 @@ public interface QuizRestApi {
 
     @ApiOperation("Retrieve a list of quizzes")
     @GET
+    @Produces(Formats.BASE_JSON)
     List<QuizDto> getQuizzes();
+
+
+    @ApiOperation("Retrieve a list of quizzes with pagination")
+    @GET
+    @Produces(Formats.HAL_V1)
+    ListDto<QuizDto> getPaginatedQuizzes(
+            @ApiParam("Offset in the list of quizzes")
+            @QueryParam("offset")
+            @DefaultValue("0")
+            Integer offset,
+
+            @ApiParam("Limit of quizzes in a single retrieved page")
+            @QueryParam("limit")
+            @DefaultValue("10")
+            Integer limit
+    );
 
 
     @ApiOperation("Retrieve a quiz by its id")

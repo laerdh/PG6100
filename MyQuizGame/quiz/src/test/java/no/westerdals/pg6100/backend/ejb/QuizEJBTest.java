@@ -114,11 +114,12 @@ public class QuizEJBTest {
 
     @Test
     public void testDeleteQuizQuestion() throws Exception {
+        int limit = 100;
         Long id = createQuizQuestion();
 
-        int expected = quizEJB.getAllQuizzes().size();
+        int expected = quizEJB.getAllQuizzes(limit).size();
         assertEquals(1, quizEJB.deleteQuiz(id));
-        int actual = quizEJB.getAllQuizzes().size();
+        int actual = quizEJB.getAllQuizzes(limit).size();
 
         assertEquals(expected - 1, actual);
     }

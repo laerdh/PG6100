@@ -19,6 +19,8 @@ import static no.westerdals.pg6100.backend.validation.InputValidation.validInput
 @Stateless
 public class CategoryEJB {
 
+    private int MAX_FROM_DB = 1000;
+
     @PersistenceContext
     private EntityManager em;
 
@@ -311,7 +313,7 @@ public class CategoryEJB {
     public List<Category> getAllCategoriesWithQuizzes() {
         Set<Category> categories = new HashSet<>();
 
-        quizEJB.getAllQuizzes().forEach(q ->
+        quizEJB.getAllQuizzes(MAX_FROM_DB).forEach(q ->
                 categories.add(q.getParentSubSubCategory().getParentSubCategory().getParentCategory()));
 
         return new ArrayList<>(categories);
@@ -320,7 +322,7 @@ public class CategoryEJB {
     public List<SubSubCategory> getAllSubSubCategoryWithQuizzes() {
         Set<SubSubCategory> subSubCategories = new HashSet<>();
 
-        quizEJB.getAllQuizzes().forEach(q ->
+        quizEJB.getAllQuizzes(MAX_FROM_DB).forEach(q ->
                 subSubCategories.add(q.getParentSubSubCategory()));
 
         return new ArrayList<>(subSubCategories);

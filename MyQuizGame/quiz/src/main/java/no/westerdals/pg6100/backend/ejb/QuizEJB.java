@@ -60,8 +60,9 @@ public class QuizEJB {
         return em.find(Quiz.class, id) != null;
     }
 
-    public List<Quiz> getAllQuizzes() {
+    public List<Quiz> getAllQuizzes(int limit) {
         Query query = em.createNamedQuery(Quiz.GET_ALL_QUIZZES);
+        query.setMaxResults(limit);
 
         return query.getResultList();
     }

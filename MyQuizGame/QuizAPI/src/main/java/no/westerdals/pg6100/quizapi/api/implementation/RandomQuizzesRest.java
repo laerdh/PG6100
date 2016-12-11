@@ -27,7 +27,7 @@ public class RandomQuizzesRest implements RandomQuizzesRestApi{
 
     @Override
     public Response getRandomQuizzes(Integer n, Long id) {
-        List<Quiz> all = quizEJB.getAllQuizzes();
+        List<Quiz> all = quizEJB.getAllQuizzes(1000);
         List<Quiz> filtered = new ArrayList<>();
         List<Long> quizIds;
 

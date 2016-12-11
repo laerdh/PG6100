@@ -8,14 +8,20 @@ import no.westerdals.pg6100.quizapi.api.QuizRestApi;
 import no.westerdals.pg6100.quizapi.api.utils.WebException;
 import no.westerdals.pg6100.quizapi.dto.QuizDto;
 import no.westerdals.pg6100.quizapi.dto.QuizPostDto;
+import no.westerdals.pg6100.quizapi.dto.collection.ListConverter;
+import no.westerdals.pg6100.quizapi.dto.collection.ListDto;
 import no.westerdals.pg6100.quizapi.dto.converter.QuizConverter;
+import no.westerdals.pg6100.quizapi.hal.HalLink;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.List;
 
@@ -31,11 +37,67 @@ public class QuizRest implements QuizRestApi {
     @EJB
     private CategoryEJB categoryEJB;
 
+    @Context
+    UriInfo uriInfo;
+
     // GET
 
     @Override
     public List<QuizDto> getQuizzes() {
-        return QuizConverter.transform(quizEJB.getAllQuizzes());
+        return QuizConverter.transform(quizEJB.getAllQuizzes(1000));
+    }
+
+    @Override
+    public ListDto<QuizDto> getPaginatedQuizzes(Integer offset, Integer limit) {
+        if (offset < 0) {
+            throw new WebApplicationException("Negative offset: " + offset, 400);
+        }
+
+        if (limit < 1) {
+            throw new WebApplicationException("Limit should be at least 1: " + limit, 400);
+        }
+
+        int maxFromDb = 50;
+        List<Quiz> results = quizEJB.getAllQuizzes(maxFromDb);
+
+        if (offset != 0 && offset >= results.size()) {
+            throw new WebApplicationException("Offset " + offset + " is out of bounds (" + results.size() + ")", 400);
+        }
+
+        ListDto<QuizDto> dto = ListConverter.transform(results, offset, limit);
+
+        UriBuilder builder = uriInfo.getBaseUriBuilder()
+                .path(QUIZ_PATH)
+                .queryParam("limit", limit);
+
+
+        /*
+            Create URL links for "self", "next" and "previous" pages.
+            Each page will have up to "limit" QuizDto objects.
+            A page is identified by the offset in the list.
+
+            Note: needs to clone the builder, as each call
+            like "queryParam" does not create a new one, but
+            rather update the existing one
+         */
+
+        dto._links.self = new HalLink(builder.clone()
+                .queryParam("offset", offset)
+                .build().toString());
+
+        if (!results.isEmpty() && offset > 0) {
+            dto._links.previous = new HalLink(builder.clone()
+                .queryParam("offset", Math.max(offset - limit, 0))
+                .build().toString());
+        }
+
+        if (offset + limit < results.size()) {
+            dto._links.next = new HalLink(builder.clone()
+                .queryParam("offset", offset + limit)
+                .build().toString());
+        }
+
+        return dto;
     }
 
     @Override

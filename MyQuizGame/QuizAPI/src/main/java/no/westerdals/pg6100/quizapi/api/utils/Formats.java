@@ -7,4 +7,7 @@ public interface Formats {
     //note the "vnd." (which starts for "vendor") and the
     // "+json" (ie, treat it having json structure)
     String V1_JSON = "application/vnd.pg6100.quiz+json; charset=UTF-8; version=1";
+
+    // HAL content v1
+    String HAL_V1 = "application/hal+json; charset=UTF-8; version=1";
 }
