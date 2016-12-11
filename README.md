@@ -8,6 +8,7 @@ Consists of following modules:
 * QuizAPI (REST API)
 * QuizSOAP (SOAP API)
 * GameAPI (REST API)
+
 Run **QuizAPI** with the following command:
 ```
 mvn wildfly:run
