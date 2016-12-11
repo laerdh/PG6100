@@ -15,6 +15,7 @@
         <module>QuizAPI</module>
         <module>report</module>
         <module>GameAPI</module>
+        <module>QuizSOAP</module>
     </modules>
 
     <properties>
@@ -29,6 +30,7 @@
         <jackson-version>2.7.4</jackson-version>
         <dropwizard.version>1.0.3</dropwizard.version>
         <hystrix-version>1.5.8</hystrix-version>
+        <rxjava-version>1.2.2</rxjava-version>
     </properties>
 
     <dependencyManagement>
@@ -224,11 +226,6 @@
                 <version>${swagger-version}</version>
             </dependency>
             <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>2.7</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-client</artifactId>
                 <version>3.1.0.CR2</version>
@@ -249,15 +246,14 @@
                 <version>${hystrix-version}</version>
             </dependency>
             <dependency>
+                <groupId>io.reactivex</groupId>
+                <artifactId>rxjava</artifactId>
+                <version>${rxjava-version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>2.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.tomakehurst</groupId>
-                <artifactId>wiremock-standalone</artifactId>
-                <version>2.2.1</version>
-                <scope>test</scope>
             </dependency>
 
         </dependencies>
@@ -291,6 +287,7 @@
                 </plugin>
 
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.0.0</version>
                     <configuration>
@@ -313,6 +310,9 @@
                             </goals>
                         </execution>
                     </executions>
+                    <configuration>
+                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    </configuration>
                 </plugin>
 
 
@@ -387,13 +387,12 @@
                     <artifactId>wildfly-maven-plugin</artifactId>
                     <version>1.1.0.Alpha11</version>
                     <configuration>
-                        <skip>true</skip>
                         <!--
                             If jbossHome is not specified, this plugin will download it.
                             Here, we point to the same installation done for the unit tests
                             with the maven-dependency-plugin, as to avoid double download/installation
                           -->
-                        <jbossHome>${jbossHome}</jbossHome>
+                        <!--<jbossHome>${jbossHome}</jbossHome> -->
                         <add-user>
                             <users>
                                 <user>

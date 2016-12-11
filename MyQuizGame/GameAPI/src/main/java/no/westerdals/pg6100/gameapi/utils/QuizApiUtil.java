@@ -59,6 +59,12 @@ public class QuizApiUtil {
         return client.target(uri).request(MediaType.APPLICATION_JSON_TYPE).get();
     }
 
+    public static boolean isCorrectAnswer(Long quizId, Integer answer) {
+        Integer correctAnswer = QuizApiUtil.getQuizAnswer(quizId).readEntity(Integer.class);
+
+        return correctAnswer != null && answer.equals(correctAnswer);
+    }
+
     private static Response getQuizzes(Integer limit, Integer category) {
         URI uri = UriBuilder.fromUri(QUIZ_API_PATH + RANDOM_QUIZZES_PATH)
                 .queryParam("n", limit)

@@ -63,6 +63,32 @@ public class GameApplicationTest extends GameApplicationTestBase {
         get().then().statusCode(200).body("size()", is(0));
     }
 
+//    @Test
+//    public void testCreateAndDeleteGame() throws Exception {
+//        int numberOfQuizzes = 5;
+//
+//        get().then().statusCode(200).body("size()", is(0));
+//
+//        String url = given().contentType(ContentType.JSON)
+//                .queryParam("n", numberOfQuizzes)
+//                .post()
+//                .then()
+//                .statusCode(201)
+//                .extract().header("Location");
+//
+//        // Extract id from URL in Header Location
+//        Long id = Long.parseLong(url.substring(url.length() - 1, url.length()));
+//
+//        get().then().statusCode(200).body("size()", is(1));
+//
+//        given().pathParam("id", id)
+//                .delete("/{id}")
+//                .then()
+//                .statusCode(204);
+//
+//        get().then().statusCode(200).body("size()", is(0));
+//    }
+
     @Test
     public void testGetRandomQuizzesStub() throws Exception {
         int numberOfQuizzes = 5;
@@ -83,6 +109,35 @@ public class GameApplicationTest extends GameApplicationTestBase {
                 .then()
                 .statusCode(200)
                 .body("size()", is(numberOfQuizzes));
+    }
+
+    @Test
+    public void testPostInvalidAnswerShouldFail() throws Exception {
+        int numberOfQuizzes = 5;
+
+        String url = given().contentType(ContentType.JSON)
+                .queryParam("n", numberOfQuizzes)
+                .post()
+                .then()
+                .statusCode(201)
+                .extract().header("Location");
+
+        // Extract id from URL in Header Location
+        Long id = Long.parseLong(url.substring(url.length() - 1, url.length()));
+        Integer answer = -1;
+
+        String quizJson = getJsonData("quizlist.json");
+        String categoryJson = getJsonData("subsubcategories.json");
+        stubJsonSubSubCategoryResponse(categoryJson);
+        stubJsonQuizResponse(quizJson);
+        stubJsonCorrectAnswerResponse(id, answer);
+
+        given().contentType(ContentType.JSON)
+                .pathParam("id", id)
+                .queryParam("answer", answer)
+                .post("/{id}")
+                .then()
+                .statusCode(400);
     }
 
     private void stubJsonQuizResponse(String json) throws Exception {
@@ -107,6 +162,17 @@ public class GameApplicationTest extends GameApplicationTestBase {
                                 .withHeader("Content-Type", "application/json; charset=UTF-8")
                                 .withHeader("Content-Length", "" + json.getBytes("utf-8").length)
                                 .withBody(json)));
+    }
+
+    private void stubJsonCorrectAnswerResponse(Long id, Integer correctAnswer) throws Exception {
+        wiremockServer.stubFor(
+                WireMock.get(
+                        urlPathEqualTo("/myquizgame/quiz/api/quizzes/" + id + "/answer"))
+
+                        .willReturn(WireMock.aResponse()
+                                .withHeader("Content-Type", "text/plain; charset=UTF-8")
+                                .withHeader("Content-Length", "" + correctAnswer.byteValue())
+                                .withBody(String.valueOf(correctAnswer))));
     }
 
     private String getJsonData(String jsonFile) throws Exception {

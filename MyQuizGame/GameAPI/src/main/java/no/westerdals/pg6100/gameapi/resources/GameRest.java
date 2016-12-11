@@ -14,6 +14,8 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
 
+import static no.westerdals.pg6100.gameapi.utils.QuizApiUtil.isCorrectAnswer;
+
 @Api(value = "/games", description = "API for Quiz Games")
 @Path("/games")
 @Consumes({
@@ -203,12 +205,5 @@ public class GameRest {
         Game g = gameDao.findById(id);
 
         return g != null && g.getAnswered().equals(g.getTotalQuizzes());
-    }
-
-
-    private boolean isCorrectAnswer(Long quizId, Integer answer) {
-        Integer correctAnswer = QuizApiUtil.getQuizAnswer(quizId).readEntity(Integer.class);
-
-        return correctAnswer != null && answer.equals(correctAnswer);
     }
 }
