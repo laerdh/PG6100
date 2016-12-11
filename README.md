@@ -6,25 +6,30 @@ Consists of following modules:
 
 * Quiz (Backend)
 * QuizAPI (REST API)
+* QuizSOAP (SOAP API)
 * GameAPI (REST API)
-
-Run **QuizAPI** with `the following command:
+Run **QuizAPI** with the following command:
 ```
 mvn wildfly:run
 ```
 
+Run **QuizSOAP** with the following command:
+```
+mvn wildfly:run
+```
+ 
 Run **GameAPI** with the following command:
 ```
-mvn clean package
+mvn package
 ```
 and then:
 ```
-java -jar GameAPI-1.0-SNAPSHOT.jar server config.yml
+java -jar target/GameAPI-1.0-SNAPSHOT.jar server config.yml
 ```
 
 ## WorkshopREST
 A small REST API created in workshop, 1/12-16. 
-Provides CRUD operation to a resource /users
+Provides CRUD operation to a resource 'Users'.
 
 Run **WorkshopREST** with the following command:
 ```
